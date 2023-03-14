@@ -7,7 +7,6 @@ import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 // Data
 import SIMSDATA from '../lib/SimMat';
 // Indigenous Model Data
-import IndigenousSIMSDATA from '../lib/IndigenousSimMat';
 import INDSIMS200 from '../lib/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
 import IndigenousWords from '../lib/IndigenousSimWords';
 
