@@ -5,10 +5,10 @@ import {GUI} from 'three/addons/libs/lil-gui.module.min.js';
 import './css/Graph.css';
 import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 // Data
-import SIMSDATA from '../lib/SimMat';
+import SIMSDATA from '../lib/data/SimMat';
 // Indigenous Model Data
-import INDSIMS200 from '../lib/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
-import IndigenousWords from '../lib/IndigenousSimWords';
+import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
+import IndigenousWords from '../lib/data/IndigenousSimWords';
 
 import {WG, WN, WE} from '../lib/WordGraphHelper';
 
