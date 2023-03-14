@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/idep.final/static/css/main.073c9b0a.css",
+    "main.js": "/idep.final/static/js/main.7974c64a.js",
+    "static/js/787.6ac51a15.chunk.js": "/idep.final/static/js/787.6ac51a15.chunk.js",
+    "static/media/logo.svg": "/idep.final/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/idep.final/index.html",
+    "main.073c9b0a.css.map": "/idep.final/static/css/main.073c9b0a.css.map",
+    "main.7974c64a.js.map": "/idep.final/static/js/main.7974c64a.js.map",
+    "787.6ac51a15.chunk.js.map": "/idep.final/static/js/787.6ac51a15.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.7974c64a.js"
+  ]
+}
