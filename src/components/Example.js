@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 // Object Classes
-import {ExampleGraph, ExampleNode, ExampleEdge} from '../lib/ExampleGraphHelper';
+import {ExampleGraph, ExampleNode, ExampleEdge} from '../lib/ExampleHelper';
 
 const Example = () => {
     const mountRef = useRef(null);
