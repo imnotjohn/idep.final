@@ -82,8 +82,6 @@ const WordGraph = () => {
                 new THREE.MeshPhongMaterial({color: 0xD9D192}),
                 MAX_NODES
             );
-            // params.nodeCount = 20;
-            // sphereInstance.count = params.nodeCount;
             sphereInstance.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // will be updated every frame
 
             scene.add(sphereInstance);
@@ -130,18 +128,6 @@ const WordGraph = () => {
             camera.lookAt(vec.x/len, vec.y/len, vec.z/len);
         }
 
-        // const initLabel = (node) => {
-        //     // 2D
-        //     const nodeDiv = document.createElement("div");
-        //     nodeDiv.className = "label";
-        //     nodeDiv.textContent = node.w;
-        //     nodeDiv.style.marginTop = "-1em";
-        //     const nodeLabel = new CSS2DObject(nodeDiv);
-        //     nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
-        //     // sphereInstance.add(nodeLabel);
-        //     scene.add(nodeLabel);
-        // }
-
         const initNodes = () => {
             // when changing slider for amount of nodes
             if (g.nodes.length > 0) {
@@ -162,15 +148,11 @@ const WordGraph = () => {
         }
 
         const updateNodes = () => {
-            // for (let i = 0; i < params.nodeCount; i++) {
             for (let i = 0; i < g.nodes.length; i++) {
                 const n = g.nodes[i];
-                // initLabel(n);
                 _dummy.position.set(n.p.x, n.p.y, n.p.z);
                 _dummy.updateMatrix();
                 sphereInstance.setMatrixAt(i, _dummy.matrix);
-
-    
             }
 
             sphereInstance.instanceMatrix.needsUpdate = true;
@@ -194,8 +176,6 @@ const WordGraph = () => {
 
             const moveScale = nScale;
             for (let j = 0; j < params.nodeCount; j++) {
-                // const row = SimMat[j]; // similarity matrix from glove-50 model
-                // const row = IndigenousSIMSDATA[j]; // similarity matrix from indigenous model
                 const row = _SIMS[j];
                 for (let i = j + 1; i < params.nodeCount; i++) {
                     const e = new WE(g.nodes[j], g.nodes[i])
@@ -235,33 +215,6 @@ const WordGraph = () => {
                     scene.add(lineSegments);
                 }
             }
-            // } else {
-                // lineSegments already exists
-                // for (let i = 0; i < scene.children.length; i++) {
-                //     if (scene.children[i].isLineSegments) {
-                //         const obj = scene.children[i];
-                //         obj.geometry.dispose();
-                //         obj.material.dispose(); 
-                //         scene.remove(obj);
-                //     }
-                // }
-
-                // for (let i = 0; i < g.edges.length; i++) {
-                //     if (g.edges[i].show) {
-                //         lineNum++;
-                //         const pts = [g.edges[i].n0.p, g.edges[i].n1.p];
-                //         const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
-                //         lineSegments = new THREE.LineSegments(lineGeo, 
-                //             new THREE.LineBasicMaterial({
-                //                 color: 0xFF0033,
-                //                 transparent: true,
-                //                 opacity: 0.45,
-                //                 depthWrite: false
-                //             }));
-                //         scene.add(lineSegments);
-                //     }
-                // }
-            // }
 
             sphereInstance.instanceMatrix.needsUpdate = true;
             lineSegments.geometry.setDrawRange(0, lineNum);
@@ -290,10 +243,8 @@ const WordGraph = () => {
             requestAnimationFrame(animate);
 
             g.removeLabels();
-            // g.PurgeLabels();
             g.Move(0.95, 0.015);
             updateNodes();
-            setTargetAverage();
             initEdges();
             render();
             controls.update();
@@ -309,11 +260,11 @@ const WordGraph = () => {
 
     return (
         <>
-            {/* <div id="title">First Futures: Gather</div>
+            <div id="title">First Futures: Gather</div>
             <div id="status">
                 <p>Count: <span id="count"></span></p>
                 <p>Threshold: <span id="threshold"></span></p>
-            </div> */}
+            </div>
             <div id="Graph" ref={mountRef} />
         </>
     )
