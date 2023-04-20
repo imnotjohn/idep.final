@@ -19,9 +19,7 @@ class WG {
     PurgeEdges = () => {
         this.edges = [];
     }
-    test() {
-        console.log("test");
-    }
+    
     // internal functions
     initLabels = (node) => {
         // 2D
@@ -71,23 +69,23 @@ class WG {
         }
     }
 
-    GetEdgeLines = () => {
-        for (let i = 0; i < this.edges.length; i++) {
-            if (this.edges[i].show) {
-                const pts = [this.edges[i].n0.p, this.edges[i].n1.p];
-                const lineGeometry = new THREE.BufferGeometry().setFromPoints(pts);
-                const lineSegment = new THREE.LineSegments( // add to scene?
-                    lineGeometry,
-                    new THREE.LineBasicMaterial({
-                        color: 0xedf1e5,
-                        transparent: true,
-                        opacity: 0.45,
-                        depthWrite: false,
-                    })
-                )
-            }
-        }
-    }
+    // GetEdgeLines = () => {
+    //     for (let i = 0; i < this.edges.length; i++) {
+    //         if (this.edges[i].show) {
+    //             const pts = [this.edges[i].n0.p, this.edges[i].n1.p];
+    //             const lineGeometry = new THREE.BufferGeometry().setFromPoints(pts);
+    //             const lineSegment = new THREE.LineSegments( // add to scene?
+    //                 lineGeometry,
+    //                 new THREE.LineBasicMaterial({
+    //                     color: 0xedf1e5,
+    //                     transparent: true,
+    //                     opacity: 0.45,
+    //                     depthWrite: false,
+    //                 })
+    //             )
+    //         }
+    //     }
+    // }
 }
 
 // word node

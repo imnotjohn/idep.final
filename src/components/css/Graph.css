@@ -14,10 +14,11 @@
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
     
-    color: #FFFFFF;
-    font-size: 0.95em; /* node label fontsize */
+    color: #333; /* node label color */
+    /* font-size: 0.95em; node label fontsize */
+    font-size: 0.8em;
     letter-spacing: 0.035em;
-    opacity: 0.8;
+    opacity: 0.75;
     text-transform: lowercase;
 }
 
