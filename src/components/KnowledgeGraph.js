@@ -43,10 +43,10 @@ const KnowledgeGraph = () => {
             nodeCount: 25,
             threshold: 0.68,
             state: 0,
-            state1: () => {params.state = 1},
-            state2: () => {params.state = 2},
-            state3: () => {params.state = 3},
-            state4: () => {params.state = 4},
+            state1: () => {updateStates(1)},
+            state2: () => {updateStates(2)},
+            state3: () => {updateStates(3)},
+            state4: () => {updateStates(4)},
         }
 
         const init = () => {
@@ -151,6 +151,30 @@ const KnowledgeGraph = () => {
             statesControl.push(guiStatesFolder.add(params, "state2"));
             statesControl.push(guiStatesFolder.add(params, "state3"));
             statesControl.push(guiStatesFolder.add(params, "state4"));
+        }
+
+        const updateStates = (state) => {
+            // refactor for redundancy...
+            // maybe don't need to keep track of global states...just change files here
+            params.state = state
+            switch (state) {
+                case 2:
+                    console.log(state);
+                    _SIMS = INDSIMS200;
+                    break;
+                case 3:
+                    console.log(state);
+                    _SIMS = SIMSDATA;
+                    break;
+                case 4:
+                    console.log(state);
+                    _SIMS = INDSIMS200;
+                    break;
+                default:
+                    console.log(state == 1);
+                    _SIMS = SIMSDATA;
+                    break;
+            }            
         }
 
         const loopStates = () => {
