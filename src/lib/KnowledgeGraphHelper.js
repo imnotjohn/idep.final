@@ -2,8 +2,8 @@ import * as THREE from 'three';
 // Labels
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-// word graph
-class WG {
+// Graph
+class G {
     constructor() {
         this.nodes = [];
         this.edges = [];
@@ -20,20 +20,8 @@ class WG {
     PurgeEdges = () => {
         this.edges = [];
     }
-    
-    // internal functions
-    initLabels = (node) => {
-        // 2D
-        const nodeDiv = document.createElement("div");
-        nodeDiv.className = "label";
-        nodeDiv.textContent = node.w;
-        nodeDiv.style.marginTop = "-1em";
-        const nodeLabel = new CSS2DObject(nodeDiv);
-        nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
-        // sphereInstance.add(nodeLabel);
-        this.scene.add(nodeLabel);        
-    }
-    removeLabels = () => {
+
+    PurgeLabels = () => {
         const sc = this.scene.children;
         for (let i = 0; i < sc.length; i++) {
             if (sc[i].isCSS2DObject) {
@@ -41,18 +29,6 @@ class WG {
             }
         }
     }
-
-    PurgeLabels = () => {
-        this.removeLabels();
-    }
-
-    // UpdateLabels = () => {
-    //     this.removeLabels();
-        
-    //     for (let i = 0; i < this.nodes.length; i++) {
-    //         this.initLabels(this.nodes[i]);
-    //     }
-    // }
 
     Move = (damping, dt) => {
         if (this.fixed) return;
@@ -70,32 +46,26 @@ class WG {
         }
     }
 
-    // GetEdgeLines = () => {
-    //     for (let i = 0; i < this.edges.length; i++) {
-    //         if (this.edges[i].show) {
-    //             const pts = [this.edges[i].n0.p, this.edges[i].n1.p];
-    //             const lineGeometry = new THREE.BufferGeometry().setFromPoints(pts);
-    //             const lineSegment = new THREE.LineSegments( // add to scene?
-    //                 lineGeometry,
-    //                 new THREE.LineBasicMaterial({
-    //                     color: 0xedf1e5,
-    //                     transparent: true,
-    //                     opacity: 0.45,
-    //                     depthWrite: false,
-    //                 })
-    //             )
-    //         }
-    //     }
-    // }
+    initLabels = (node) => {
+        //2D
+        const nodeDiv = document.createElement("div");
+        nodeDiv.className = "label";
+        nodeDiv.textContent = node.w;
+        nodeDiv.style.marginTop = "-1em";
+        const nodeLabel = new CSS2DObject(nodeDiv);
+        nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
+        // sphereInstance.add(nodeLabel);
+        this.scene.add(nodeLabel);       
+    }
 }
 
-// word node
-class WN {
-    constructor(p, w) {
+// Node
+class N {
+    constructor (p, w) {
         this.p = p;
         this.w = w;
         this.u = new THREE.Vector3();
-        this.f = new THREE.Vector3();
+        this.f = new THREE.Vector3();        
     }
 
     Move = (damping, dt) => {
@@ -106,14 +76,14 @@ class WN {
     }
 }
 
-// word edge
-class WE {
+// Edge
+class E {
     constructor(n0, n1) {
         this.n0 = n0;
         this.n1 = n1;
         this.targetLength = 100.0;
         this.k = 0.15; // spring constant
-        this.show = false;
+        this.show = false;        
     }
 
     ApplySpringForce = () => {
@@ -129,4 +99,4 @@ class WE {
     }
 }
 
-export {WG, WN, WE};
+export {G, N, E};

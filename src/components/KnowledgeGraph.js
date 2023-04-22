@@ -11,7 +11,7 @@ import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix f
 import IndigenousWords from '../lib/data/IndigenousSimWords';
 
 // Class + Helper files
-import {WG, WN, WE} from '../lib/WordGraphHelper';
+import {G, N, E} from '../lib/KnowledgeGraphHelper';
 
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
@@ -25,11 +25,11 @@ const KnowledgeGraph = () => {
 
     useEffect( () => {
         let mRef = mountRef;
-        const g = new WG();
+        const g = new G();
         
         // reusable variables
         let camera, scene, renderer, controls; // threejs environment variables
-        let lineSegments, sphereInstance; // sphere + line variables
+        let esternLineSegments, lineSegments, sphereInstance; // sphere + line variables
         let labelRenderer; // CSS2D label variable
         const _dummy = new THREE.Object3D();
         // const _matrix = new THREE.Matrix4();
@@ -39,7 +39,7 @@ const KnowledgeGraph = () => {
         let _SIMS = SIMSDATA;
 
         const params = {
-            corpus: "western",
+            corpus: "estern",
             nodeCount: 25,
             threshold: 0.68,
             state: 0,
@@ -120,9 +120,9 @@ const KnowledgeGraph = () => {
                 // countElement.innerText = params.nodeCount;
             // });
 
-            // model dropdowns
+            // model dropdons
             const guiModelFolder = gui.addFolder("Model Selection");
-            const modelStates = ["western", "non-western"];
+            const modelStates = ["estern", "non-estern"];
             guiModelFolder.add(params, "corpus").options(modelStates).onChange((v) => {
                 if (!v.includes("non")) {
                     params.threshold = 0.70;
@@ -171,21 +171,21 @@ const KnowledgeGraph = () => {
                     _SIMS = INDSIMS200;
                     break;
                 default:
-                    console.log(state == 1);
+                    console.log(state === 1);
                     _SIMS = SIMSDATA;
                     break;
             }            
         }
 
-        const loopStates = () => {
-            const functionQueue = [console.log("00"), console.log("01"), console.log("02")];
-            const l = functionQueue.length;
-            while (true) {
-                for (let i = 0; i < l; i++) {
-                    l[i]();
-                }
-            }
-        }
+        // const loopStates = () => {
+        //     const functionQueue = [console.log("00"), console.log("01"), console.log("02")];
+        //     const l = functionQueue.length;
+        //     while (true) {
+        //         for (let i = 0; i < l; i++) {
+        //             l[i]();
+        //         }
+        //     }
+        // }
 
         const setTargetAverage = () => {
             const vec = new THREE.Vector3();
@@ -207,7 +207,7 @@ const KnowledgeGraph = () => {
             }
 
             for (let i = 0; i < params.nodeCount; i++) {
-                g.nodes.push(new WN(
+                g.nodes.push(new N(
                     new THREE.Vector3(
                         Math.random() * 200 - 10,
                         Math.random() * 200 - 10,
@@ -231,6 +231,29 @@ const KnowledgeGraph = () => {
             sphereInstance.geometry.attributes.position.needsUpdate = true;
         }
 
+        const initWesternEdges = () => {
+            const moveScale = nScale;
+
+            for (let j = 0; j < params.nodeCount; j++) {
+                const row = SIMSDATA[j]; // western corpus
+                for (let i = j + 1; i < params.nodeCount; i++) {
+                    const e = new E(g.nodes[j], g.nodes[i]);
+                    g.westernEdges.push(e);
+                    const sim = row[i];
+                    if (sim < 0.71) {
+                        e.k = 0;
+                        e.show = false;
+                    } else {
+                        e.k = 0;
+                        e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
+                        e.show = true;
+                    }
+                }
+            }
+
+            drawWesternEdges();
+        }
+
         const initEdges = () => {
             // Clear Edges if Edges already exists
             if (g.edges.length > 0) {
@@ -250,7 +273,7 @@ const KnowledgeGraph = () => {
             for (let j = 0; j < params.nodeCount; j++) {
                 const row = _SIMS[j];
                 for (let i = j + 1; i < params.nodeCount; i++) {
-                    const e = new WE(g.nodes[j], g.nodes[i])
+                    const e = new E(g.nodes[j], g.nodes[i])
                     g.edges.push(e);
                     const sim = row[i];
                     if (sim < params.threshold) {
@@ -267,6 +290,28 @@ const KnowledgeGraph = () => {
             }
 
             drawEdges();
+        }
+
+        const drawWesternEdges = () => {
+            let esternLineNum = 0;
+            for (let i = 0; i < g.edges.length; i++) {
+                if (g.edges[i].show) {
+                    esternLineNum++;
+                    const pts = [g.westernEdges[i].n0.p, g.westernEdges[i].n1.p];
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+                    esternLineSegments = new THREE.LineSegments(lineGeo,
+                        new THREE.LineBasicMaterial({
+                            color: 0x00CC00,
+                            transparent: true,
+                            opacity: edgeOpacity,
+                            depthWrite: false,
+                        }));
+                    scene.add(esternLineSegments);
+                }
+            }
+
+            esternLineSegments.geometry.setDrawRange(0, esternLineNum);
+            esternLineSegments.geometry.attributes.position.needsUpdate = true;
         }
 
         const drawEdges = () => {
@@ -314,10 +359,11 @@ const KnowledgeGraph = () => {
         const animate = () => {
             requestAnimationFrame(animate);
 
-            g.removeLabels();
+            g.PurgeLabels();
             g.Move(0.95, 0.015);
             updateNodes();
             initEdges();
+            initWesternEdges();
 
             // loopStates();
 
