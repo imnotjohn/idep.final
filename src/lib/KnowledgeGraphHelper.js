@@ -21,6 +21,10 @@ class G {
         this.edges = [];
     }
 
+    PurgeWesternEdges = () => {
+        this.westernEdges = [];
+    }
+
     PurgeLabels = () => {
         const sc = this.scene.children;
         for (let i = 0; i < sc.length; i++) {
@@ -62,8 +66,8 @@ class G {
 // Node
 class N {
     constructor (p, w) {
-        this.p = p;
-        this.w = w;
+        this.p = p; // position (x, y)
+        this.w = w; // word 
         this.u = new THREE.Vector3();
         this.f = new THREE.Vector3();        
     }

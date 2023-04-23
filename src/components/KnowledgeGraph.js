@@ -5,8 +5,9 @@ import {GUI} from 'three/addons/libs/lil-gui.module.min.js';
 import './css/Graph.css';
 import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 
-// Indigenous Model Data
+// Western Model Data
 import SIMSDATA from '../lib/data/SimMat';
+// Indigenous Model Data
 import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
 import IndigenousWords from '../lib/data/IndigenousSimWords';
 
@@ -29,11 +30,9 @@ const KnowledgeGraph = () => {
         
         // reusable variables
         let camera, scene, renderer, controls; // threejs environment variables
-        let esternLineSegments, lineSegments, sphereInstance; // sphere + line variables
+        let westernLineSegments, lineSegments, sphereInstance; // sphere + line variables
         let labelRenderer; // CSS2D label variable
         const _dummy = new THREE.Object3D();
-        // const _matrix = new THREE.Matrix4();
-        // const _position = new THREE.Vector3();
         const _points = [];
         const nScale = 60;
         let _SIMS = SIMSDATA;
@@ -42,7 +41,7 @@ const KnowledgeGraph = () => {
             corpus: "estern",
             nodeCount: 25,
             threshold: 0.68,
-            state: 0,
+            westernVisible: true,
             state1: () => {updateStates(1)},
             state2: () => {updateStates(2)},
             state3: () => {updateStates(3)},
@@ -121,18 +120,18 @@ const KnowledgeGraph = () => {
             // });
 
             // model dropdons
-            const guiModelFolder = gui.addFolder("Model Selection");
-            const modelStates = ["estern", "non-estern"];
-            guiModelFolder.add(params, "corpus").options(modelStates).onChange((v) => {
-                if (!v.includes("non")) {
-                    params.threshold = 0.70;
-                    _SIMS = SIMSDATA;
-                } else {
-                    // params.threshold = 0.56; //100 Epochs
-                    params.threshold = 0.52; //200 Epochs
-                    _SIMS = INDSIMS200;
-                }
-            })
+            // const guiModelFolder = gui.addFolder("Model Selection");
+            // const modelStates = ["estern", "non-estern"];
+            // guiModelFolder.add(params, "corpus").options(modelStates).onChange((v) => {
+            //     if (!v.includes("non")) {
+            //         params.threshold = 0.70;
+            //         _SIMS = SIMSDATA;
+            //     } else {
+            //         // params.threshold = 0.56; //100 Epochs
+            //         params.threshold = 0.52; //200 Epochs
+            //         _SIMS = INDSIMS200;
+            //     }
+            // })
 
             // similarity threshold
             const guiThresholdFolder = gui.addFolder("Threshold");
@@ -142,7 +141,7 @@ const KnowledgeGraph = () => {
 
             // buttons
             const guiStatesFolder = gui.addFolder("States");
-            const graphStates = [1, 2, 3, 4];
+            // const graphStates = [1, 2, 3, 4];
             const statesControl = [];
             // guiStatesFolder.add(params, "state").options(graphStates).onChange((v) => {
             //     console.log(v);
@@ -151,6 +150,23 @@ const KnowledgeGraph = () => {
             statesControl.push(guiStatesFolder.add(params, "state2"));
             statesControl.push(guiStatesFolder.add(params, "state3"));
             statesControl.push(guiStatesFolder.add(params, "state4"));
+            // western corpus toggle
+            guiStatesFolder.add(params, "westernVisible").onChange((v) => {
+                if (v) {
+                    initWesternEdges();
+                } else {
+                    g.PurgeWesternEdges();
+
+                    for (let i = 0; i < scene.children.length; i++) {
+                        if (scene.children[i].name === "westernLine") {
+                            const obj = scene.children[i];
+                            obj.geometry.dispose();
+                            obj.material.dispose(); 
+                            scene.remove(obj);
+                        }
+                    }
+                }
+            });
         }
 
         const updateStates = (state) => {
@@ -159,33 +175,19 @@ const KnowledgeGraph = () => {
             params.state = state
             switch (state) {
                 case 2:
-                    console.log(state);
                     _SIMS = INDSIMS200;
                     break;
                 case 3:
-                    console.log(state);
                     _SIMS = SIMSDATA;
                     break;
                 case 4:
-                    console.log(state);
                     _SIMS = INDSIMS200;
                     break;
                 default:
-                    console.log(state === 1);
                     _SIMS = SIMSDATA;
                     break;
             }            
         }
-
-        // const loopStates = () => {
-        //     const functionQueue = [console.log("00"), console.log("01"), console.log("02")];
-        //     const l = functionQueue.length;
-        //     while (true) {
-        //         for (let i = 0; i < l; i++) {
-        //             l[i]();
-        //         }
-        //     }
-        // }
 
         const setTargetAverage = () => {
             const vec = new THREE.Vector3();
@@ -232,16 +234,13 @@ const KnowledgeGraph = () => {
         }
 
         const initWesternEdges = () => {
-            const moveScale = nScale;
-
             for (let j = 0; j < params.nodeCount; j++) {
                 const row = SIMSDATA[j]; // western corpus
                 for (let i = j + 1; i < params.nodeCount; i++) {
                     const e = new E(g.nodes[j], g.nodes[i]);
                     g.westernEdges.push(e);
                     const sim = row[i];
-                    if (sim < 0.71) {
-                        e.k = 0;
+                    if (sim < 0.72) {
                         e.show = false;
                     } else {
                         e.k = 0;
@@ -293,25 +292,26 @@ const KnowledgeGraph = () => {
         }
 
         const drawWesternEdges = () => {
-            let esternLineNum = 0;
-            for (let i = 0; i < g.edges.length; i++) {
-                if (g.edges[i].show) {
-                    esternLineNum++;
+            let westernLineNum = 0;
+            for (let i = 0; i < g.westernEdges.length; i++) {
+                if (g.westernEdges[i].show) {
+                    westernLineNum++;
                     const pts = [g.westernEdges[i].n0.p, g.westernEdges[i].n1.p];
                     const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
-                    esternLineSegments = new THREE.LineSegments(lineGeo,
+                    westernLineSegments = new THREE.LineSegments(lineGeo,
                         new THREE.LineBasicMaterial({
                             color: 0x00CC00,
                             transparent: true,
                             opacity: edgeOpacity,
                             depthWrite: false,
                         }));
-                    scene.add(esternLineSegments);
+                    westernLineSegments.name = "westernLine";
+                    scene.add(westernLineSegments);
                 }
             }
 
-            esternLineSegments.geometry.setDrawRange(0, esternLineNum);
-            esternLineSegments.geometry.attributes.position.needsUpdate = true;
+            westernLineSegments.geometry.setDrawRange(0, westernLineNum);
+            westernLineSegments.geometry.attributes.position.needsUpdate = true;
         }
 
         const drawEdges = () => {
@@ -363,10 +363,9 @@ const KnowledgeGraph = () => {
             g.Move(0.95, 0.015);
             updateNodes();
             initEdges();
-            initWesternEdges();
-
-            // loopStates();
-
+            if (params.westernVisible) {
+                initWesternEdges();
+            }
             render();
             controls.update();
         }
