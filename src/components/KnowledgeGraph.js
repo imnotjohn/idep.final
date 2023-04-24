@@ -41,7 +41,7 @@ const KnowledgeGraph = () => {
             corpus: "estern",
             nodeCount: 25,
             threshold: 0.68,
-            westernVisible: true,
+            westernVisible: false,
             state1: () => {updateStates(1)},
             state2: () => {updateStates(2)},
             state3: () => {updateStates(3)},
@@ -175,15 +175,19 @@ const KnowledgeGraph = () => {
             params.state = state
             switch (state) {
                 case 2:
+                    params.threshold = 0.52;
                     _SIMS = INDSIMS200;
                     break;
                 case 3:
+                    params.threshold = 0.72;
                     _SIMS = SIMSDATA;
                     break;
                 case 4:
+                    params.threshold = 0.52;
                     _SIMS = INDSIMS200;
                     break;
                 default:
+                    params.threshold = 0.72;
                     _SIMS = SIMSDATA;
                     break;
             }            
@@ -240,7 +244,7 @@ const KnowledgeGraph = () => {
                     const e = new E(g.nodes[j], g.nodes[i]);
                     g.westernEdges.push(e);
                     const sim = row[i];
-                    if (sim < 0.72) {
+                    if (sim < 0.70) {
                         e.show = false;
                     } else {
                         e.k = 0;
@@ -302,7 +306,7 @@ const KnowledgeGraph = () => {
                         new THREE.LineBasicMaterial({
                             color: 0x00CC00,
                             transparent: true,
-                            opacity: edgeOpacity,
+                            opacity: edgeOpacity * 0.4,
                             depthWrite: false,
                         }));
                     westernLineSegments.name = "westernLine";
