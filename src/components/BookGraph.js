@@ -164,7 +164,6 @@ const BookGraph = () => {
             const moveScale = nScale;
             for (let j = 0; j < params.nodeCount; j++) {
                 const row = _SIMS[j];
-                console.log(row);
                 for (let i = j + 1; i < params.nodeCount; i++) {
                     const e = new E(g.nodes[j], g.nodes[i])
                     g.edges.push(e);
@@ -208,7 +207,7 @@ const BookGraph = () => {
             }
             // lineSegments.geometry.setDrawRange(0, lineNum);
             // lineSegments.geometry.attributes.position.needsUpdate = true;
-            }
+        }
 
         const onWindowResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
