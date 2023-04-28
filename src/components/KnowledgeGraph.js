@@ -8,8 +8,16 @@ import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 // Western Model Data
 import SIMSDATA from '../lib/data/SimMat';
 // Indigenous Model Data
-import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
-import IndigenousWords from '../lib/data/IndigenousSimWords';
+import SIMMAT from '../lib/data/NativeReadsSimMat';
+// import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
+// import IndigenousWords from '../lib/data/IndigenousSimWords';
+import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
+
+// titles
+import NR_BOOKS from '../lib/data/NR_BOOKS.js';
+
+// books sim mat
+import BOOKS_SIM_MAT from '../lib/data/NR_SimMat.js';
 
 // Class + Helper files
 import {G, N, E} from '../lib/KnowledgeGraphHelper';
@@ -38,9 +46,8 @@ const KnowledgeGraph = () => {
         let _SIMS = SIMSDATA;
 
         const params = {
-            corpus: "estern",
             nodeCount: 25,
-            threshold: 0.68,
+            threshold: 0.70,
             westernVisible: false,
             state1: () => {updateStates(1)},
             state2: () => {updateStates(2)},
@@ -175,16 +182,16 @@ const KnowledgeGraph = () => {
             params.state = state
             switch (state) {
                 case 2:
-                    params.threshold = 0.52;
-                    _SIMS = INDSIMS200;
+                    params.threshold = 0.72;
+                    _SIMS = SIMMAT;
                     break;
                 case 3:
                     params.threshold = 0.72;
                     _SIMS = SIMSDATA;
                     break;
                 case 4:
-                    params.threshold = 0.52;
-                    _SIMS = INDSIMS200;
+                    params.threshold = 0.72;
+                    _SIMS = SIMMAT;
                     break;
                 default:
                     params.threshold = 0.72;
@@ -219,7 +226,8 @@ const KnowledgeGraph = () => {
                         Math.random() * 200 - 10,
                         Math.random() * 200 - 50,
                         ), 
-                    IndigenousWords[i]));
+                    // IndigenousWords[i]));
+                    NativeReadsWords[i]));
             }
 
             updateNodes();
