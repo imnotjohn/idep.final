@@ -50,11 +50,18 @@ class G {
         }
     }
 
+    // convert word string to Title Case
+    titleCaseLabels = (w) => {
+        let title = w.split(" ");
+        title.map( (t) => {t.length > 3 ? t.toUpperCase() : t.toLowerCase()});
+        return title.join(" ");
+    }
+
     initLabels = (node) => {
         //2D
         const nodeDiv = document.createElement("div");
         nodeDiv.className = "label";
-        nodeDiv.textContent = node.w;
+        nodeDiv.textContent = this.titleCaseLabels(node.w);
         nodeDiv.style.marginTop = "-1em";
         const nodeLabel = new CSS2DObject(nodeDiv);
         nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
