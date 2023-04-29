@@ -136,7 +136,7 @@ const BookGraph = () => {
                     _SIMS = NativeReadsWordsSimMat;
                     _WORDS = NativeReadsWords;
 
-                    params.threshold = 0.70;
+                    params.threshold = 0.29;
                     params.nodeCount = _WORDS.length;
 
                     init();
@@ -146,7 +146,7 @@ const BookGraph = () => {
 
             // similarity threshold
             const guiThresholdFolder = gui.addFolder("Threshold");
-            guiThresholdFolder.add(params, "threshold", 0.45, 1.00, 0.01).onChange((v) => {
+            guiThresholdFolder.add(params, "threshold", 0.15, 1.00, 0.01).onChange((v) => {
                 initEdges();
                 params.threshold = v;
             });

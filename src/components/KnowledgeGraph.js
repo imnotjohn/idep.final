@@ -6,7 +6,7 @@ import './css/Graph.css';
 import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 
 // Western Model Data
-import SIMSDATA from '../lib/data/SimMat';
+import SIMSDATA from '../lib/data/WesternSimMat';
 // Indigenous Model Data
 import SIMMAT from '../lib/data/NativeReadsSimMat';
 // import INDSIMS200 from '../lib/data/IndigenousSimMat200'; // Similarity Matrix from Model trained on 200 Epochs
