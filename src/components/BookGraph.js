@@ -16,7 +16,12 @@ import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
 import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
 
 // Class + Helper files
-import {G, N, E} from '../lib/KnowledgeGraphHelper';
+import {G, N, E} from '../lib/BookGraphHelper';
+
+// test
+import { Line2 } from 'three/addons/lines/Line2.js';                        //test
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';          //test
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';          //test
 
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
@@ -226,6 +231,7 @@ const BookGraph = () => {
                         _points.push(g.nodes[j].p)
                         e.k = 50;
                         e.targetLength = 35 + (1.0 - sim) * moveScale; // 20.0;//
+                        e.weight = sim; // test
                         e.show = true;
                     }
                 }
@@ -241,12 +247,23 @@ const BookGraph = () => {
                 if (g.edges[i].show) {
                     lineNum++;
                     const pts = [g.edges[i].n0.p, g.edges[i].n1.p];
+                    // const lineGeo = new LineGeometry();  //test
+                    // lineSegments = new Line2(lineGeo,    //test
+                    //     new LineMaterial({               //test
+                    //         color: edgeColor,            //test
+                    //         transparent: true,           //test
+                    //         opacity: edgeOpacity,        //test
+                    //         linewidth: 10,               //test
+                    //         depthWrite: false,           //test
+                    //     }));                             //test
                     const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
                     lineSegments = new THREE.LineSegments(lineGeo, 
                         new THREE.LineBasicMaterial({
-                            color: edgeColor,
+                            // color: edgeColor,
+                            color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
                             transparent: true,
-                            opacity: edgeOpacity,
+                            // opacity: edgeOpacity,
+                            opacity: 0.9 - g.edges[i].weight,
                             depthWrite: false
                         }));
 
