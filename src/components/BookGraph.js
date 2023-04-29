@@ -260,10 +260,12 @@ const BookGraph = () => {
                     lineSegments = new THREE.LineSegments(lineGeo, 
                         new THREE.LineBasicMaterial({
                             // color: edgeColor,
-                            color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
+                            // color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
+                            color: 0x000000,
                             transparent: true,
                             // opacity: edgeOpacity,
-                            opacity: 0.9 - g.edges[i].weight,
+                            linewidth: 0.5,
+                            opacity: 0.9 - (1.0 - g.edges[i].weight),
                             depthWrite: false
                         }));
 
