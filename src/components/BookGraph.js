@@ -20,8 +20,6 @@ import {G, N, E} from '../lib/BookGraphHelper';
 
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
-// const edgeColor = new THREE.Color(0xFF0000); // 0xFE9946 orange
-// const edgeOpacity = 0.35;
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
@@ -105,8 +103,11 @@ const BookGraph = () => {
         }
 
         const initNodeObject = () => {
+            const nodeGeometry = !params.demo.includes("Themes") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
+
             sphereInstance = new THREE.InstancedMesh(
-                new THREE.SphereGeometry(0.8, 32, 16),
+                // new THREE.SphereGeometry(0.8, 32, 16),
+                nodeGeometry,
                 new THREE.MeshPhongMaterial({color: nodeColor}),
                 MAX_NODES
             );
@@ -137,14 +138,13 @@ const BookGraph = () => {
                     initNodes();
 
                 } else {
-                    // TODO: How to clear Scene?`
                     purgeChildren();
 
                     // Book Themes
                     _SIMS = NativeReadsWordsSimMat;
                     _WORDS = NativeReadsWords;
 
-                    params.threshold = 0.29;
+                    params.threshold = 0.32;
                     params.nodeCount = _WORDS.length;
 
                     init();

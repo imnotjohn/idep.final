@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 // Class + Helper files
-import {G, N} from '../lib/KnowledgeGraphHelper';
+import {G, N} from '../lib/BookGraphHelper';
 
 // Import JSON
 import data from "../lib/books.json";
@@ -57,10 +57,28 @@ const ImagePlayground = () => {
             onWindowResize();
         }
 
+        // const addImage = () => {
+        //     new THREE.ImageLoader()
+        //         .setCrossOrigin("*")
+        //         .load("../images/Anti-Indian.jpg") + performance.now(), (image) => {
+        //             const texture = new THREE.CanvasTexture(image);
+        //             texture.colorSpace = THREE.SRGBColorSpace();
+        //             const material = new THREE.MeshBasicMaterial({color: 0xFF8888, map: texture});
+        //             addCube(material);
+        //         }
+        // }
+
+        // const addCube = (material) => {
+        //     const geometry = new THREE.BoxGeometry(1, 1, 1);
+        //     const cube = new THREE.Mesh(geometry, material);)
+        // }
+
         const initNodeObject = () => {
             sphereInstance = new THREE.InstancedMesh(
-                new THREE.SphereGeometry(0.8, 32, 16),
-                new THREE.MeshPhongMaterial({color: nodeColor}),
+                // new THREE.SphereGeometry(0.8, 32, 16),
+                // geometry
+                new THREE.BoxGeometry(16, 1, 9),
+                new THREE.MeshBasicMaterial({color: 0xFF0000}),
                 MAX_NODES
             );
             sphereInstance.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // will be updated every frame
@@ -103,7 +121,6 @@ const ImagePlayground = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize( window.innerWidth, window.innerHeight );
-            // labelRenderer.setSize(window.innerWidth, window.innerHeight);
         }
 
         const initControls = () => {
@@ -122,7 +139,6 @@ const ImagePlayground = () => {
             }
 
             renderer.render(scene, camera);
-            // labelRenderer.render(scene, camera);
         }
 
         const animate = () => {
