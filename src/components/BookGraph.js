@@ -18,15 +18,10 @@ import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
 // Class + Helper files
 import {G, N, E} from '../lib/BookGraphHelper';
 
-// test
-import { Line2 } from 'three/addons/lines/Line2.js';                        //test
-import { LineMaterial } from 'three/addons/lines/LineMaterial.js';          //test
-import { LineGeometry } from 'three/addons/lines/LineGeometry.js';          //test
-
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
-const edgeColor = new THREE.Color(0xFF0000); // 0xFE9946 orange
-const edgeOpacity = 0.35;
+// const edgeColor = new THREE.Color(0xFF0000); // 0xFE9946 orange
+// const edgeOpacity = 0.35;
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
@@ -47,6 +42,11 @@ const BookGraph = () => {
         let _SIMS = NRBOOKSSIMMAT; // similarity matrix data
         let _WORDS = NativeReadsBookTitles;
 
+        const pointer = new THREE.Vector2();
+        let INTERSECTED, raycaster;
+        let theta = 0;
+        let radius = 300;
+
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.65,
@@ -58,6 +58,8 @@ const BookGraph = () => {
             g = new G();
             scene = g.scene;
             scene.background = sceneBGColor;
+
+            raycaster = new THREE.Raycaster();
             
             // if (document.querySelector("#count")) {
             //     const countElement = document.querySelector("#count");
@@ -82,6 +84,7 @@ const BookGraph = () => {
             initNodeObject(); // Instanced Object
             initGUI(); // GUI Object
 
+            window.addEventListener('mousemove', onPointerMove);
             window.addEventListener( 'resize', onWindowResize );
             onWindowResize();
         }
@@ -247,15 +250,6 @@ const BookGraph = () => {
                 if (g.edges[i].show) {
                     lineNum++;
                     const pts = [g.edges[i].n0.p, g.edges[i].n1.p];
-                    // const lineGeo = new LineGeometry();  //test
-                    // lineSegments = new Line2(lineGeo,    //test
-                    //     new LineMaterial({               //test
-                    //         color: edgeColor,            //test
-                    //         transparent: true,           //test
-                    //         opacity: edgeOpacity,        //test
-                    //         linewidth: 10,               //test
-                    //         depthWrite: false,           //test
-                    //     }));                             //test
                     const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
                     lineSegments = new THREE.LineSegments(lineGeo, 
                         new THREE.LineBasicMaterial({
@@ -285,12 +279,67 @@ const BookGraph = () => {
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        const onPointerMove = (e) => {
+            e.preventDefault();
+
+            pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+            pointer.y = (e.clientY / window.innerHeight) * 2 + 1;
+
+            // find intersections
+            // raycaster.setFromCamera(pointer, camera);
+            // const intersects = raycaster.intersectObject(sphereInstance);
+            // if (intersects.length > 0) {
+            //     // is Intersect
+            //     const tooltip = document.createElement("div");
+            //     tooltip.innerHTML = "tooltip";
+            //     tooltip.style.position = 'absolute';
+            //     tooltip.style.top = e.clientY + 'px';
+            //     tooltip.style.left = e.clientX + 'px';
+            //     document.body.appendChild(tooltip);
+            // }
+
+            // visualize raycaster
+            // const rayMaterial = new THREE.LineBasicMaterial({color: 0xFF0000});
+            // const rayGeometry = new THREE.BufferGeometry().setFromPoints(camera.position.clone());
+            // const direction = new THREE.Vector3();
+            // direction.subVectors(pointer, camera.position).normalize();
+            // const rayLength = 1000;
+            // const rayEndPoint = new THREE.Vector3().addVectors(camera.position, direction.multiplyScalar(rayLength));
+            // // rayGeometry.vertices.setFromPoints(rayEndPoint);
+            // rayGeometry.setFromPoints(rayEndPoint);
+
+            // const ray = new THREE.Line(rayGeometry, rayMaterial);
+            // scene.add(ray);
+        }
+
         const render = () => {
             if (sphereInstance) {
                 scene.rotation.y += 0.00015;
                 scene.updateMatrixWorld();
                 sphereInstance.updateMatrixWorld();
             }
+            // theta += 0.1;
+
+            // camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+            // camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+            // camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
+
+            // find intersections
+            // raycaster.setFromCamera(pointer, camera);
+            // const intersects = raycaster.intersectObjects(scene.children, false);
+
+            // if (intersects.length > 0) {
+            //     if (INTERSECTED != intersects[0].object) {
+            //         if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+            //         INTERSECTED = intersects[0].object;
+            //         INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+            //         INTERSECTED.material.emissive.setHex(0xFF0000);
+            //     }
+            // } else {
+            //     if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+            //     INTERSECTED = null;
+            // }
 
             renderer.render(scene, camera);
             labelRenderer.render(scene, camera);
@@ -315,9 +364,7 @@ const BookGraph = () => {
     }, []);
 
     return (
-        <>
-            <div id="Graph" ref={mountRef} />
-        </>
+        <div id="Graph" ref={mountRef} />
     )
 }
 
