@@ -127,7 +127,7 @@ const BookGraph = () => {
 
                     init();
                     initNodes();
-                    
+
                 } else {
                     // TODO: How to clear Scene?`
                     purgeChildren();
