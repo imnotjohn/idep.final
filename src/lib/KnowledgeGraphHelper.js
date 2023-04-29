@@ -15,6 +15,32 @@ class G {
     Purge = () => {
         this.nodes = [];
         this.edges = [];
+
+        const sc = this.scene.children;
+        for (let i = 0; i < sc.length; i++) {
+            const obj = sc[i];
+            
+            // purge lineSegments for Edges
+            if (obj.isLineSegments) {
+                obj.geometry.dispose();
+                obj.material.dispose();
+                this.scene.remove(obj);
+            }
+
+            // purge instancedMesh for Nodes
+            if (obj.isInstancedMesh) {
+                obj.geometry.dispose();
+                obj.material.dispose();
+                this.scene.remove(obj);
+            }
+
+            // test
+            obj.traverse((c) => {
+                this.scene.remove(c);
+            });
+
+            this.scene = new THREE.Scene();
+        }
     }
 
     PurgeEdges = () => {

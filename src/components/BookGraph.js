@@ -5,13 +5,15 @@ import {GUI} from 'three/addons/libs/lil-gui.module.min.js';
 import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 import './css/Graph.css';
 
-// Book Data
-// titles
+// Book Titles
 import NativeReadsBookTitles from '../lib/data/NativeReadsBookTitles.js';
-// books sim mat
+// Titles SIMMAT
 import NRBOOKSSIMMAT from '../lib/data/NativeReadsBookSimMat.js';
-// nr words
-// import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
+
+// Book Themes
+import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
+// Themes SIMMAT
+import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
 
 // Class + Helper files
 import {G, N, E} from '../lib/KnowledgeGraphHelper';
@@ -28,11 +30,11 @@ const BookGraph = () => {
 
     useEffect( () => {
         let mRef = mountRef;
-        const g = new G();
+        let g;
         
         // reusable variables
         let camera, scene, renderer, controls; // threejs environment variables
-        let westernLineSegments, lineSegments, sphereInstance; // sphere + line variables
+        let lineSegments, sphereInstance; // sphere + line variables
         let labelRenderer; // CSS2D label variable
         const _dummy = new THREE.Object3D();
         const _points = [];
@@ -43,19 +45,21 @@ const BookGraph = () => {
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.65,
+            demo: "Book Titles",
         }
 
         const init = () => {
             // threejs scene
+            g = new G();
             scene = g.scene;
             scene.background = sceneBGColor;
             
-            if (document.querySelector("#count")) {
-                const countElement = document.querySelector("#count");
-                const threshElement = document.querySelector("#threshold");
-                countElement.innerText = params.nodeCount;
-                threshElement.innerText = params.threshold;
-            }
+            // if (document.querySelector("#count")) {
+            //     const countElement = document.querySelector("#count");
+            //     const threshElement = document.querySelector("#threshold");
+            //     countElement.innerText = params.nodeCount;
+            //     threshElement.innerText = params.threshold;
+            // }
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(225, 250, 100);
@@ -107,12 +111,58 @@ const BookGraph = () => {
             // set up GUI
             const gui = new GUI();
 
+            // dropdown
+            const guiDemoFolder = gui.addFolder("Demo Selection");
+            const guiDemoStates = ["Book Titles", "Book Themes"];
+            guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
+                if (!v.includes("Themes")) {
+                    purgeChildren();
+
+                    // Book Titles
+                    _SIMS = NRBOOKSSIMMAT;
+                    _WORDS = NativeReadsBookTitles;
+
+                    params.threshold = 0.70;
+                    params.nodeCount = _WORDS.length;
+
+                    init();
+                    initNodes();
+                    
+                } else {
+                    // TODO: How to clear Scene?`
+                    purgeChildren();
+
+                    // Book Themes
+                    _SIMS = NativeReadsWordsSimMat;
+                    _WORDS = NativeReadsWords;
+
+                    params.threshold = 0.70;
+                    params.nodeCount = _WORDS.length;
+
+                    init();
+                    initNodes();
+                }
+            })
+
             // similarity threshold
             const guiThresholdFolder = gui.addFolder("Threshold");
             guiThresholdFolder.add(params, "threshold", 0.45, 1.00, 0.01).onChange((v) => {
                 initEdges();
                 params.threshold = v;
             });
+        }
+
+        const purgeChildren = () => {
+            g.Purge();
+            scene = null;
+            document.body.removeChild(renderer.domElement);
+            renderer = null;
+            lineSegments = null;
+            sphereInstance = null;
+            camera = null;
+            controls = null; 
+            document.body.removeChild(labelRenderer.domElement);
+            labelRenderer = null; 
         }
 
         const initNodes = () => {
