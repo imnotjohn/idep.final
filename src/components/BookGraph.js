@@ -93,7 +93,7 @@ const BookGraph = () => {
             initNodeObject(); // Instanced Object
             initGUI(); // GUI Object
 
-            window.addEventListener('mousemove', onPointerMove);
+            // window.addEventListener('mousemove', onPointerMove);
             window.addEventListener( 'resize', onWindowResize );
             onWindowResize();
         }
@@ -183,10 +183,10 @@ const BookGraph = () => {
                     // demo is visualizing Books
                     _WESTERN = wBooksSimMat;
                 } else {
-                    g.purgeWesternEdges();
+                    g.PurgeWesternEdges();
 
                     for (let i = 0; i < scene.children.length; i++) {
-                        if (scene.children[i].name === "westernLine") {
+                        if (scene.children[i].name === "westernLineSegment") {
                             const obj = scene.children[i];
                             obj.geometry.dispose();
                             obj.material.dispose(); 
@@ -231,7 +231,7 @@ const BookGraph = () => {
                             opacity: 0.02,
                             depthWrite: false,
                         }));
-                    westernLineSegments.name = "westernLine";
+                    westernLineSegments.name = "westernLineSegment";
 
                     westernLineSegments.geometry.setDrawRange(0, westernLineNum);
                     westernLineSegments.geometry.attributes.position.needsUpdate = true;    
