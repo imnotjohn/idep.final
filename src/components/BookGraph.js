@@ -10,10 +10,14 @@ import NativeReadsBookTitles from '../lib/data/NativeReadsBookTitles.js';
 // Titles SIMMAT
 import NRBOOKSSIMMAT from '../lib/data/NativeReadsBookSimMat.js';
 
-// Book Themes
+// Theme Words
 import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
 // Themes SIMMAT
 import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
+
+// Western Data
+import NRBOOKSSIMMAT_WESTERN from '../lib/data/NRBooksSimMat_WESTERN'; // Book – Western
+import NRSIMMAT_WESTERN from '../lib/data/NRWordsSimMat_WESTERN'; // Themes – Western
 
 // Class + Helper files
 import {G, N, E} from '../lib/BookGraphHelper';
@@ -21,6 +25,10 @@ import {G, N, E} from '../lib/BookGraphHelper';
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
+
+// for drawing edges of Western Connections
+const wBooksSimMat = NRBOOKSSIMMAT_WESTERN;
+const wThemesSimMat = NRSIMMAT_WESTERN;
 
 const BookGraph = () => {
     const mountRef = useRef(null);
@@ -39,6 +47,7 @@ const BookGraph = () => {
         const nScale = 60;
         let _SIMS = NRBOOKSSIMMAT; // similarity matrix data
         let _WORDS = NativeReadsBookTitles;
+        let _WESTERN, westernLineSegments;
 
         const pointer = new THREE.Vector2();
         let INTERSECTED, raycaster;
@@ -47,8 +56,10 @@ const BookGraph = () => {
 
         const params = {
             nodeCount: _WORDS.length,
-            threshold: 0.65,
+            threshold: 0.57, // 0.65
+            westernThreshold: 0.95,
             demo: "Book Titles",
+            western: false,
         }
 
         const init = () => {
@@ -127,11 +138,13 @@ const BookGraph = () => {
                 if (!v.includes("Themes")) {
                     purgeChildren();
 
-                    // Book Titles
+                    // Books
                     _SIMS = NRBOOKSSIMMAT;
                     _WORDS = NativeReadsBookTitles;
 
-                    params.threshold = 0.70;
+                    // params.threshold = 0.70;
+                    params.threshold = 0.57;
+                    params.westernThreshold = 0.95;
                     params.nodeCount = _WORDS.length;
 
                     init();
@@ -140,17 +153,18 @@ const BookGraph = () => {
                 } else {
                     purgeChildren();
 
-                    // Book Themes
+                    // Themes
                     _SIMS = NativeReadsWordsSimMat;
                     _WORDS = NativeReadsWords;
 
-                    params.threshold = 0.32;
+                    params.threshold = 0.29; // 0.32
+                    params.westernThreshold = 0.62;
                     params.nodeCount = _WORDS.length;
 
                     init();
                     initNodes();
                 }
-            })
+            });
 
             // similarity threshold
             const guiThresholdFolder = gui.addFolder("Threshold");
@@ -158,6 +172,76 @@ const BookGraph = () => {
                 initEdges();
                 params.threshold = v;
             });
+
+            // toggle western edges visibility
+            const westernFolder = gui.addFolder("Toggle Western Lens");
+            westernFolder.add(params, "western").onChange((e) => {
+                if (e && params.demo.includes("Theme")) {
+                    // demo is visualizing Themes
+                    _WESTERN = wThemesSimMat;
+                } else if (e) {
+                    // demo is visualizing Books
+                    _WESTERN = wBooksSimMat;
+                } else {
+                    g.purgeWesternEdges();
+
+                    for (let i = 0; i < scene.children.length; i++) {
+                        if (scene.children[i].name === "westernLine") {
+                            const obj = scene.children[i];
+                            obj.geometry.dispose();
+                            obj.material.dispose(); 
+                            scene.remove(obj);
+                        }
+                    }
+                }
+            })
+        }
+
+        const initWesternEdges = () => {
+            for (let j = 0; j < params.nodeCount; j++) {
+                const row = _WESTERN[j]; // western corpus
+                for (let i = j + 1; i < params.nodeCount; i++) {
+                    const e = new E(g.nodes[j], g.nodes[i]);
+                    g.westernEdges.push(e);
+                    const sim = row[i];
+                    if (sim < params.westernThreshold) {
+                        e.show = false;
+                    } else {
+                        e.k = 0;
+                        e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
+                        e.show = true;
+                    }
+                }
+            }
+
+            drawWesternEdges();            
+        }
+
+        const drawWesternEdges = () => {
+            let westernLineNum = 0;
+            for (let i = 0; i < g.westernEdges.length; i++) {
+                if (g.westernEdges[i].show) {
+                    westernLineNum++;
+                    const pts = [g.westernEdges[i].n0.p, g.westernEdges[i].n1.p];
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+                    westernLineSegments = new THREE.LineSegments(lineGeo,
+                        new THREE.LineBasicMaterial({
+                            color: 0xFF0000,
+                            transparent: true,
+                            opacity: 0.02,
+                            depthWrite: false,
+                        }));
+                    westernLineSegments.name = "westernLine";
+
+                    westernLineSegments.geometry.setDrawRange(0, westernLineNum);
+                    westernLineSegments.geometry.attributes.position.needsUpdate = true;    
+
+                    scene.add(westernLineSegments);
+                }
+            }
+
+            // westernLineSegments.geometry.setDrawRange(0, westernLineNum);
+            // westernLineSegments.geometry.attributes.position.needsUpdate = true;            
         }
 
         const purgeChildren = () => {
@@ -286,17 +370,18 @@ const BookGraph = () => {
             pointer.y = (e.clientY / window.innerHeight) * 2 + 1;
 
             // find intersections
-            // raycaster.setFromCamera(pointer, camera);
-            // const intersects = raycaster.intersectObject(sphereInstance);
-            // if (intersects.length > 0) {
-            //     // is Intersect
-            //     const tooltip = document.createElement("div");
-            //     tooltip.innerHTML = "tooltip";
-            //     tooltip.style.position = 'absolute';
-            //     tooltip.style.top = e.clientY + 'px';
-            //     tooltip.style.left = e.clientX + 'px';
-            //     document.body.appendChild(tooltip);
-            // }
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObject(sphereInstance, true);
+            console.log(intersects);
+            if (intersects.length > 0) {
+                // is Intersect
+                const tooltip = document.createElement("div");
+                tooltip.innerHTML = "tooltip";
+                tooltip.style.position = 'absolute';
+                tooltip.style.top = e.clientY + 'px';
+                tooltip.style.left = e.clientX + 'px';
+                document.body.appendChild(tooltip);
+            }
 
             // visualize raycaster
             // const rayMaterial = new THREE.LineBasicMaterial({color: 0xFF0000});
@@ -351,6 +436,11 @@ const BookGraph = () => {
             g.PurgeLabels();
             g.Move(0.95, 0.015);
             updateNodes();
+
+            if (params.western) {
+                initWesternEdges();
+            }
+
             initEdges();
             render();
             controls.update();
