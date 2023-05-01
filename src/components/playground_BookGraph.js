@@ -6,15 +6,25 @@ import {CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 import './css/Graph.css';
 
 // Book Titles
-import BookTitles from '../lib/data/BookTitles.js';
-import ThemeWords from '../lib/data/ThemeWords'; // NR Word List
+import NativeReadsBookTitles from '../lib/data/NativeReadsBookTitles.js';
+// Titles SIMMAT
+import NRBOOKSSIMMAT from '../lib/data/NativeReadsBookSimMat.js';
+
+// Theme Words
+import NativeReadsWords from '../lib/data/NativeReadsWords'; // NR Word List
+// Themes SIMMAT
+import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
 
 // Western Data
-import BOOKS_WESTERN from '../lib/data/BooksWestern';
-import THEMES_WESTERN from '../lib/data/ThemesWestern';
+// import NRBOOKSSIMMAT_WESTERN from '../lib/data/NRBooksSimMat_WESTERN'; // Book – Western
+import NRBOOKSSIMMATWESTERN_02 from '../lib/data/NRBooksSimMatWestern_02'; // Book – Western
+import NRSIMMAT_WESTERN from '../lib/data/NRWordsSimMat_WESTERN'; // Themes – Western
 
-import BOOKS from '../lib/data/Books';
-import THEMES from '../lib/data/Themes';
+// Updated Corpus - included WoLakota --> best embeddings so far
+import NRBOOKSSIMMAT_01 from '../lib/data/NativeReadsBookSimMat_01.js';
+import NRBOOKSSIMMAT_02 from '../lib/data/NativeReadsBookSimMat_02.js';
+// import NRSIMMAT_01 from '../lib/data/NativeReadsWordsSimMat_01';
+import NRSIMMAT_02 from '../lib/data/NativeReadsWordsSimMat_02';
 
 // Class + Helper files
 import {G, N, E} from '../lib/BookGraphHelper';
@@ -22,6 +32,10 @@ import {G, N, E} from '../lib/BookGraphHelper';
 // Color Constants
 const sceneBGColor = new THREE.Color(0xeeeeee);
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
+
+// for drawing edges of Western Connections
+const wBooksSimMat = NRBOOKSSIMMATWESTERN_02;
+const wThemesSimMat = NRSIMMAT_WESTERN;
 
 const BookGraph = () => {
     const mountRef = useRef(null);
@@ -38,8 +52,8 @@ const BookGraph = () => {
         const _dummy = new THREE.Object3D();
         const _points = [];
         const nScale = 60;
-        let _SIMS = BOOKS; // similarity matrix data
-        let _WORDS = BookTitles;
+        let _SIMS = NRBOOKSSIMMAT; // similarity matrix data
+        let _WORDS = NativeReadsBookTitles;
         let _WESTERN, westernLineSegments;
 
         const pointer = new THREE.Vector2();
@@ -51,7 +65,7 @@ const BookGraph = () => {
             nodeCount: _WORDS.length,
             threshold: 0.57, // 0.65
             westernThreshold: 0.75,
-            demo: "Books Demo",
+            demo: "Book Titles",
             western: false,
         }
 
@@ -107,7 +121,7 @@ const BookGraph = () => {
         }
 
         const initNodeObject = () => {
-            const nodeGeometry = params.demo.includes("Books") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
+            const nodeGeometry = !params.demo.includes("01") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
 
             sphereInstance = new THREE.InstancedMesh(
                 // new THREE.SphereGeometry(0.8, 32, 16),
@@ -126,7 +140,7 @@ const BookGraph = () => {
 
             // dropdown
             const guiDemoFolder = gui.addFolder("Demo Selection");
-            const guiDemoStates = ["Books Demo", "Themes Demo"];
+            const guiDemoStates = ["Books 01", "Books 02", "Themes 02", "Themes 00"];
             guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
                 console.log(v);
                 
@@ -137,35 +151,64 @@ const BookGraph = () => {
                 // TODO: add counter for Nodes
                 // TODO: add counter for corpus size
                 // TODO: implement view of themes per book?
-                switch (v) {
-                    case "Themes Demo":
-                        purgeChildren();
 
-                        _SIMS = THEMES;
-                        _WORDS = ThemeWords;
+                if (v === "Books 01") {
+                    purgeChildren();
 
-                        params.threshold = 0.38; // 0.32
-                        params.westernThreshold = 0.62;
-                        params.nodeCount = _WORDS.length;
+                    // Books
+                    // _SIMS = NRBOOKSSIMMAT
+                    _SIMS = NRBOOKSSIMMAT_01;
+                    _WORDS = NativeReadsBookTitles;
 
-                        console.log(_WORDS.length);
+                    // params.threshold = 0.70;
+                    params.threshold = 0.57;
+                    params.westernThreshold = 0.78;
+                    params.nodeCount = _WORDS.length;
 
-                        init();
-                        initNodes();
-                        break;
-                    
-                    default:
-                        purgeChildren();
+                    init();
+                    initNodes();
 
-                        _SIMS = BOOKS;
-                        _WORDS = BookTitles;
+                } else if (v === "Books 02") {
+                    purgeChildren();
 
-                        params.threshold = 0.57;
-                        params.westernThreshold = 0.78;
-                        params.nodeCount = _WORDS.length;
+                    _SIMS = NRBOOKSSIMMAT_02;
+                    _WORDS = NativeReadsBookTitles;
 
-                        init();
-                        initNodes();
+                    params.threshold = 0.57;
+                    params.westernThreshold = 0.78;
+                    params.nodeCount = _WORDS.length;
+
+                    init();
+                    initNodes();
+
+                } else if (v === "Themes 02") {
+                    purgeChildren();
+
+                    _SIMS = NRSIMMAT_02;
+                    _WORDS = NativeReadsWords;
+
+                    params.threshold = 0.35; // 0.32
+                    params.westernThreshold = 0.62;
+                    params.nodeCount = _WORDS.length;
+
+                    console.log(_WORDS.length);
+
+                    init();
+                    initNodes();
+
+                } else if (v === "Themes 00") {
+                    purgeChildren();
+
+                    // Themes
+                    _SIMS = NativeReadsWordsSimMat;
+                    _WORDS = NativeReadsWords;
+
+                    params.threshold = 0.35; // 0.32
+                    params.westernThreshold = 0.62;
+                    params.nodeCount = _WORDS.length;
+
+                    init();
+                    initNodes();
                 }
             });
 
@@ -181,10 +224,10 @@ const BookGraph = () => {
             westernFolder.add(params, "western").onChange((e) => {
                 if (e && params.demo.includes("Themes")) {
                     // demo is visualizing Themes
-                    _WESTERN = THEMES_WESTERN;
+                    _WESTERN = wThemesSimMat;
                 } else if (e) {
                     // demo is visualizing Books
-                    _WESTERN = BOOKS_WESTERN;
+                    _WESTERN = wBooksSimMat;
                 } else {
                     g.PurgeWesternEdges();
 

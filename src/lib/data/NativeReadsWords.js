@@ -19,7 +19,7 @@ const NativeReadsWords = [
         // "self-determination",
         "political",
         "land",
-        "popular",
+        "popular culture",
         "tribal",
         "oppression",
         "myths",
@@ -32,7 +32,7 @@ const NativeReadsWords = [
         "capitalism",
         "lakota",
         "dakota",
-        "nakota",
+        // "nakota",
         "prayer"
 ];
 
