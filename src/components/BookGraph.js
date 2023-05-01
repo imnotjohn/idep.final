@@ -19,6 +19,10 @@ import NativeReadsWordsSimMat from '../lib/data/NativeReadsWordsSimMat';
 import NRBOOKSSIMMAT_WESTERN from '../lib/data/NRBooksSimMat_WESTERN'; // Book – Western
 import NRSIMMAT_WESTERN from '../lib/data/NRWordsSimMat_WESTERN'; // Themes – Western
 
+// Updated Corpus - included WoLakota --> best embeddings so far
+import NRBOOKSSIMMAT_01 from '../lib/data/NativeReadsBookSimMat_01.js';
+import NativeReadsWordsSimMat_01 from '../lib/data/NativeReadsWordsSimMat_01';
+
 // Class + Helper files
 import {G, N, E} from '../lib/BookGraphHelper';
 
@@ -57,7 +61,7 @@ const BookGraph = () => {
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.57, // 0.65
-            westernThreshold: 0.95,
+            westernThreshold: 0.96,
             demo: "Book Titles",
             western: false,
         }
@@ -114,7 +118,7 @@ const BookGraph = () => {
         }
 
         const initNodeObject = () => {
-            const nodeGeometry = !params.demo.includes("Themes") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
+            const nodeGeometry = !params.demo.includes("01") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
 
             sphereInstance = new THREE.InstancedMesh(
                 // new THREE.SphereGeometry(0.8, 32, 16),
@@ -133,9 +137,10 @@ const BookGraph = () => {
 
             // dropdown
             const guiDemoFolder = gui.addFolder("Demo Selection");
-            const guiDemoStates = ["Book Titles", "Book Themes"];
+            const guiDemoStates = ["Book Titles", "Book Themes", "Book 01", "Words 01"];
             guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
-                if (!v.includes("Themes")) {
+                console.log(v);
+                if (v === "Book Titles") {
                     purgeChildren();
 
                     // Books
@@ -144,13 +149,42 @@ const BookGraph = () => {
 
                     // params.threshold = 0.70;
                     params.threshold = 0.57;
-                    params.westernThreshold = 0.95;
+                    params.westernThreshold = 0.96;
                     params.nodeCount = _WORDS.length;
 
                     init();
                     initNodes();
 
-                } else {
+                } else if (v === "Book 01") {
+                    purgeChildren();
+
+                    _SIMS = NRBOOKSSIMMAT_01;
+                    _WORDS = NativeReadsBookTitles;
+
+                    params.threshold = 0.57;
+                    params.westernThreshold = 0.96;
+                    params.nodeCount = _WORDS.length;
+
+                    init();
+                    initNodes();
+
+                } else if (v === "Words 01") {
+                    purgeChildren();
+
+                    console.log("Words 01");
+
+                    _SIMS = NativeReadsWordsSimMat_01;
+                    _WORDS = NativeReadsWords;
+                    params.threshold = 0.29; // 0.32
+                    params.westernThreshold = 0.62;
+                    params.nodeCount = _WORDS.length;
+
+                    console.log(_WORDS.length);
+
+                    init();
+                    initNodes();
+
+                } else if (v === "Book Themes") {
                     purgeChildren();
 
                     // Themes
