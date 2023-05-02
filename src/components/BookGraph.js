@@ -248,6 +248,21 @@ const BookGraph = () => {
 
         const purgeChildren = () => {
             g.Purge();
+
+            if (params.western) {
+                g.PurgeWesternEdges();
+                params.western = false;
+
+                for (let i = 0; i < scene.children.length; i++) {
+                    if (scene.children[i].name === "westernLineSegment") {
+                        const obj = scene.children[i];
+                        obj.geometry.dispose();
+                        obj.material.dispose(); 
+                        scene.remove(obj);
+                    }
+                }
+            }
+
             scene = null;
             document.body.removeChild(renderer.domElement);
             renderer = null;
