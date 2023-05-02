@@ -3,7 +3,6 @@ const ThemeWords = [
     "humility",
     "respect",
     "honor",
-    // "perseverence",
     "love",
     "sacrifice",
     "compassion",
@@ -16,7 +15,6 @@ const ThemeWords = [
     "ceremonial",
     "historical",
     "sovereignty",
-    // "self-determination",
     "political",
     "land",
     "popular culture",
@@ -32,7 +30,6 @@ const ThemeWords = [
     "capitalism",
     "lakota",
     "dakota",
-    // "nakota",
     "prayer"
 ];
 

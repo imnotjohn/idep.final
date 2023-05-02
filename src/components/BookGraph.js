@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GUI} from 'three/addons/libs/lil-gui.module.min.js';
@@ -25,7 +25,10 @@ const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
     const mountRef = useRef(null);
-    const MAX_NODES = 5000;
+    const MAX_NODES = 50;
+
+    const [mouseXpercentage, setMouseXpercentage] = useState(0);
+    const [mouseYpercentage, setMouseYpercentage] = useState(0);
 
     useEffect( () => {
         let mRef = mountRef;
@@ -43,14 +46,14 @@ const BookGraph = () => {
         let _WESTERN, westernLineSegments;
 
         const pointer = new THREE.Vector2();
-        let INTERSECTED, raycaster;
+        // let INTERSECTED, raycaster;
         let theta = 0;
         let radius = 300;
 
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.57, // 0.65
-            westernThreshold: 0.75,
+            westernThreshold: 0.78,
             demo: "Books Demo",
             western: false,
         }
@@ -61,7 +64,7 @@ const BookGraph = () => {
             scene = g.scene;
             scene.background = sceneBGColor;
 
-            raycaster = new THREE.Raycaster();
+            // raycaster = new THREE.Raycaster();
             
             // if (document.querySelector("#count")) {
             //     const countElement = document.querySelector("#count");
@@ -70,7 +73,7 @@ const BookGraph = () => {
             //     threshElement.innerText = params.threshold;
             // }
 
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
             camera.position.set(225, 250, 100);
             camera.lookAt(0, 0, 0);
 
@@ -86,7 +89,7 @@ const BookGraph = () => {
             initNodeObject(); // Instanced Object
             initGUI(); // GUI Object
 
-            // window.addEventListener('mousemove', onPointerMove);
+            window.addEventListener('mousemove', onPointerMove);
             window.addEventListener( 'resize', onWindowResize );
             onWindowResize();
         }
@@ -110,7 +113,6 @@ const BookGraph = () => {
             const nodeGeometry = params.demo.includes("Books") ? new THREE.BoxGeometry(1, 6, 4.5) : new THREE.SphereGeometry(0.8, 32, 16);
 
             sphereInstance = new THREE.InstancedMesh(
-                // new THREE.SphereGeometry(0.8, 32, 16),
                 nodeGeometry,
                 new THREE.MeshPhongMaterial({color: nodeColor}),
                 MAX_NODES
@@ -128,7 +130,6 @@ const BookGraph = () => {
             const guiDemoFolder = gui.addFolder("Demo Selection");
             const guiDemoStates = ["Books Demo", "Themes Demo"];
             guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
-                console.log(v);
                 
                 // TODO: Clean up Which version so of the data to use...
                     // TODO: Redo Books Vec w/ Indigenous Model of 50 Vecs
@@ -145,10 +146,8 @@ const BookGraph = () => {
                         _WORDS = ThemeWords;
 
                         params.threshold = 0.38; // 0.32
-                        params.westernThreshold = 0.62;
+                        params.westernThreshold = 0.575;
                         params.nodeCount = _WORDS.length;
-
-                        console.log(_WORDS.length);
 
                         init();
                         initNodes();
@@ -321,7 +320,7 @@ const BookGraph = () => {
                         _points.push(g.nodes[j].p)
                         e.k = 50;
                         e.targetLength = 35 + (1.0 - sim) * moveScale; // 20.0;//
-                        e.weight = sim; // test
+                        e.weight = sim;
                         e.show = true;
                     }
                 }
@@ -369,22 +368,39 @@ const BookGraph = () => {
         const onPointerMove = (e) => {
             e.preventDefault();
 
-            pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-            pointer.y = (e.clientY / window.innerHeight) * 2 + 1;
+            // pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+            // pointer.y = (e.clientY / window.innerHeight) * 2 + 1;
+
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            setMouseXpercentage(Math.round(e.pageY / windowHeight * 100));
+            setMouseYpercentage(Math.round(e.pageX / windowWidth * 100));
+
+
+            // $(document).mousemove(function(event) {
+            //     windowWidth = $(window).width();
+            //     windowHeight = $(window).height();
+                
+            //     mouseXpercentage = Math.round(event.pageY / windowHeight * 100);
+            //     mouseYpercentage = Math.round(event.pageX / windowWidth * 100);
+                
+            //     $('.radial-gradient').css('background', 'radial-gradient(ellipse at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)')
+            //   });
 
             // find intersections
-            raycaster.setFromCamera(pointer, camera);
-            const intersects = raycaster.intersectObject(sphereInstance, true);
-            console.log(intersects);
-            if (intersects.length > 0) {
-                // is Intersect
-                const tooltip = document.createElement("div");
-                tooltip.innerHTML = "tooltip";
-                tooltip.style.position = 'absolute';
-                tooltip.style.top = e.clientY + 'px';
-                tooltip.style.left = e.clientX + 'px';
-                document.body.appendChild(tooltip);
-            }
+            // raycaster.setFromCamera(pointer, camera);
+            // const intersects = raycaster.intersectObject(sphereInstance, true);
+            // console.log(intersects);
+            // if (intersects.length > 0) {
+            //     // is Intersect
+            //     const tooltip = document.createElement("div");
+            //     tooltip.innerHTML = "tooltip";
+            //     tooltip.style.position = 'absolute';
+            //     tooltip.style.top = e.clientY + 'px';
+            //     tooltip.style.left = e.clientX + 'px';
+            //     document.body.appendChild(tooltip);
+            // }
 
             // visualize raycaster
             // const rayMaterial = new THREE.LineBasicMaterial({color: 0xFF0000});
@@ -456,8 +472,10 @@ const BookGraph = () => {
         return () => mRef.current.removeChild(renderer.domElement);
     }, []);
 
+    const style = {background: `radial-gradient(ellipse at ' + ${mouseXpercentage} + '% ' + ${mouseYpercentage} + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)`};
+
     return (
-        <div id="Graph" ref={mountRef} />
+        <div id="Graph" style ={style} ref={mountRef} />
     )
 }
 
