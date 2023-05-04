@@ -25,7 +25,7 @@ const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
     const mountRef = useRef(null);
-    const MAX_NODES = 50;
+    const MAX_NODES = 100;
 
     const [mouseXpercentage, setMouseXpercentage] = useState(0);
     const [mouseYpercentage, setMouseYpercentage] = useState(0);
@@ -53,7 +53,7 @@ const BookGraph = () => {
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.57, // 0.65
-            westernThreshold: 0.78,
+            westernThreshold: 0.852,
             demo: "Books Demo",
             western: false,
         }
@@ -146,7 +146,7 @@ const BookGraph = () => {
                         _WORDS = ThemeWords;
 
                         params.threshold = 0.38; // 0.32
-                        params.westernThreshold = 0.575;
+                        params.westernThreshold = 0.78;
                         params.nodeCount = _WORDS.length;
 
                         init();
@@ -160,7 +160,7 @@ const BookGraph = () => {
                         _WORDS = BookTitles;
 
                         params.threshold = 0.57;
-                        params.westernThreshold = 0.78;
+                        params.westernThreshold = 0.852;
                         params.nodeCount = _WORDS.length;
 
                         init();

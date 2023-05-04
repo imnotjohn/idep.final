@@ -1,3 +1,42 @@
+
+// Iteration 01
+// const ThemeWords = [
+//     "oceti sakowin",
+//     "humility",
+//     "respect",
+//     "honor",
+//     "love",
+//     "sacrifice",
+//     "compassion",
+//     "bravery",
+//     "wisdom",
+//     "tradition",
+//     "culture",
+//     "tiospaye",
+//     "womanhood",
+//     "ceremonial",
+//     "historical",
+//     "sovereignty",
+//     "political",
+//     "land",
+//     "popular culture",
+//     "tribal",
+//     "oppression",
+//     "myths",
+//     "settler",
+//     "spiritual",  
+//     "memory",
+//     "songs",
+//     "loss",
+//     "decolonizing",
+//     "capitalism",
+//     "lakota",
+//     "dakota",
+//     "prayer"
+// ];
+
+
+// Iteration 03
 const ThemeWords = [
     "oceti sakowin",
     "humility",
@@ -17,7 +56,7 @@ const ThemeWords = [
     "sovereignty",
     "political",
     "land",
-    "popular culture",
+    "popular",
     "tribal",
     "oppression",
     "myths",
@@ -30,7 +69,27 @@ const ThemeWords = [
     "capitalism",
     "lakota",
     "dakota",
-    "prayer"
-];
+    "prayer",
+    "iktomi",
+    "courting",
+    "poet",
+    "legend",
+    "history",
+    "rosebud indian reservation",
+    "medicine man",
+    "struggle",
+    "healing",
+    "healer",
+    "trickster",
+    "spider",
+    "hero",
+    "power",
+    "genocide",
+    "trauma",
+    "violence",
+    "identity",
+    "heritage",
+    "beloved"
+    ];
 
 export default ThemeWords;
