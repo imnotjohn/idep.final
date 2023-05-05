@@ -11,6 +11,8 @@ import BookGraph from './components/BookGraph';
 import ImagePlayground from './components/ImagePlayground';
 
 function App() {
+
+  // const style = {background: `radial-gradient(ellipse at ' + ${50} + '% ' + ${50} + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)`};
   return (
     <div id="App">
       {/* <KnowledgeGraph /> */}

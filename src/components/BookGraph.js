@@ -20,7 +20,7 @@ import THEMES from '../lib/data/Themes';
 import {G, N, E} from '../lib/BookGraphHelper';
 
 // Color Constants
-const sceneBGColor = new THREE.Color(0xeeeeee);
+// const sceneBGColor = new THREE.Color(0xeeeeee);
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
@@ -29,7 +29,6 @@ const BookGraph = () => {
 
     const [mouseXpercentage, setMouseXpercentage] = useState(0);
     const [mouseYpercentage, setMouseYpercentage] = useState(0);
-    const [demoType, setDemoType] = useState("Book Demo");
 
     useEffect( () => {
         let mRef = mountRef;
@@ -46,11 +45,6 @@ const BookGraph = () => {
         let _WORDS = BookTitles;
         let _WESTERN, westernLineSegments;
 
-        const pointer = new THREE.Vector2();
-        // let INTERSECTED, raycaster;
-        let theta = 0;
-        let radius = 300;
-
         const params = {
             nodeCount: _WORDS.length,
             threshold: 0.57, // 0.65
@@ -63,7 +57,7 @@ const BookGraph = () => {
             // threejs scene
             g = new G();
             scene = g.scene;
-            scene.background = sceneBGColor;
+            // scene.background = sceneBGColor;
             
             if (document.querySelector("#container")) {
                 const demoElement = document.querySelector("#demotype");
@@ -77,9 +71,10 @@ const BookGraph = () => {
             camera.lookAt(0, 0, 0);
 
             const light = new THREE.HemisphereLight(0xFFFFFF, 0x999999);
-            scene.add(light);
+            scene.add(light);        
 
             renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+            renderer.setClearColor(0xeeeeee, 0.0); // test
             renderer.setPixelRatio( window.devicePixelRatio );
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
@@ -130,12 +125,7 @@ const BookGraph = () => {
             const guiDemoStates = ["Books Demo", "Themes Demo"];
             guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
                 
-                // TODO: Clean up Which version so of the data to use...
-                    // TODO: Redo Books Vec w/ Indigenous Model of 50 Vecs
-                // TODO: remove Nakota from the word list
                 // TODO: add counter for Edges
-                // TODO: add counter for Nodes
-                // TODO: add counter for corpus size
                 // TODO: implement view of themes per book?
                 switch (v) {
                     case "Themes Demo":
@@ -431,14 +421,13 @@ const BookGraph = () => {
     }, []);
 
     const style = {background: `radial-gradient(ellipse at ' + ${mouseXpercentage} + '% ' + ${mouseYpercentage} + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)`};
-
     return (
-        <>
+        <> 
             <div id="container">
                 <span id="demotype">Demo Test</span>
                 <span id="count">15 Nodes</span>
             </div>
-            <div id="Graph" style ={style} ref={mountRef} />
+            <div id="Graph" style={style} ref={mountRef} />
         </>
     )
 }
