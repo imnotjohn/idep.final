@@ -189,7 +189,27 @@ const BookGraph = () => {
             })
         }
 
-        const initWesternEdges = () => {
+        const initWesternEdges = () => { 
+
+            // search algorithm
+            // for (let i = 0; i < _WESTERN.length; i++) {
+            //     const row = _WESTERN[i];
+            //     for (let j = 0; j < ((i == _WESTERN.length - 1) ? i : i + 1); j++ ) {
+            //         const e = new E(g.nodes[i], g.nodes[j]);
+            //         g.westernEdges.push(e);
+            //         const sim = row[j];
+            //         if (sim < params.westernThreshold) {
+            //             e.show = false;
+            //         } else {
+            //             e.k = 0;
+            //             e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
+            //             e.show = true;
+            //         }
+            //     }
+            // }
+            
+            
+            // pan's
             for (let j = 0; j < params.nodeCount; j++) {
                 const row = _WESTERN[j]; // western corpus
                 for (let i = j + 1; i < params.nodeCount; i++) {
