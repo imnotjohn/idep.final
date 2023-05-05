@@ -411,7 +411,7 @@ const BookGraph = () => {
                 scene.updateMatrixWorld();
                 sphereInstance.updateMatrixWorld();
 
-                console.log(renderer.info);
+                // console.log(renderer.info);
             }
 
             renderer.render(scene, camera);
