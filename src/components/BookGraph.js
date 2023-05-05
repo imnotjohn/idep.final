@@ -29,6 +29,7 @@ const BookGraph = () => {
 
     const [mouseXpercentage, setMouseXpercentage] = useState(0);
     const [mouseYpercentage, setMouseYpercentage] = useState(0);
+    const [demoType, setDemoType] = useState("Book Demo");
 
     useEffect( () => {
         let mRef = mountRef;
@@ -63,15 +64,13 @@ const BookGraph = () => {
             g = new G();
             scene = g.scene;
             scene.background = sceneBGColor;
-
-            // raycaster = new THREE.Raycaster();
             
-            // if (document.querySelector("#count")) {
-            //     const countElement = document.querySelector("#count");
-            //     const threshElement = document.querySelector("#threshold");
-            //     countElement.innerText = params.nodeCount;
-            //     threshElement.innerText = params.threshold;
-            // }
+            if (document.querySelector("#container")) {
+                const demoElement = document.querySelector("#demotype");
+                const countElement = document.querySelector("#count");
+                demoElement.innerText = params.demo;
+                countElement.innerText = params.nodeCount + " Nodes";
+            }
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
             camera.position.set(225, 250, 100);
@@ -157,7 +156,8 @@ const BookGraph = () => {
                         purgeChildren();
 
                         _SIMS = BOOKS;
-                        _WORDS = BookTitles;
+                        // _WORDS = BookTitles;
+                        _WORDS = BookTitles.map((e) => e.title);
 
                         params.threshold = 0.57;
                         params.westernThreshold = 0.852;
@@ -280,6 +280,7 @@ const BookGraph = () => {
                 g.Purge();
             }
 
+
             for (let i = 0; i < params.nodeCount; i++) {
                 g.nodes.push(new N(
                     new THREE.Vector3(
@@ -287,7 +288,8 @@ const BookGraph = () => {
                         Math.random() * 200 - 10,
                         Math.random() * 200 - 50,
                         ), 
-                    _WORDS[i]));
+                    _WORDS[i],
+                    params.demo === "Book Demo" ? BookTitles[i].themes : ""));
             }
 
             updateNodes();
@@ -391,44 +393,6 @@ const BookGraph = () => {
 
             setMouseXpercentage(Math.round(e.pageY / windowHeight * 100));
             setMouseYpercentage(Math.round(e.pageX / windowWidth * 100));
-
-
-            // $(document).mousemove(function(event) {
-            //     windowWidth = $(window).width();
-            //     windowHeight = $(window).height();
-                
-            //     mouseXpercentage = Math.round(event.pageY / windowHeight * 100);
-            //     mouseYpercentage = Math.round(event.pageX / windowWidth * 100);
-                
-            //     $('.radial-gradient').css('background', 'radial-gradient(ellipse at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)')
-            //   });
-
-            // find intersections
-            // raycaster.setFromCamera(pointer, camera);
-            // const intersects = raycaster.intersectObject(sphereInstance, true);
-            // console.log(intersects);
-            // if (intersects.length > 0) {
-            //     // is Intersect
-            //     const tooltip = document.createElement("div");
-            //     tooltip.innerHTML = "tooltip";
-            //     tooltip.style.position = 'absolute';
-            //     tooltip.style.top = e.clientY + 'px';
-            //     tooltip.style.left = e.clientX + 'px';
-            //     document.body.appendChild(tooltip);
-            // }
-
-            // visualize raycaster
-            // const rayMaterial = new THREE.LineBasicMaterial({color: 0xFF0000});
-            // const rayGeometry = new THREE.BufferGeometry().setFromPoints(camera.position.clone());
-            // const direction = new THREE.Vector3();
-            // direction.subVectors(pointer, camera.position).normalize();
-            // const rayLength = 1000;
-            // const rayEndPoint = new THREE.Vector3().addVectors(camera.position, direction.multiplyScalar(rayLength));
-            // // rayGeometry.vertices.setFromPoints(rayEndPoint);
-            // rayGeometry.setFromPoints(rayEndPoint);
-
-            // const ray = new THREE.Line(rayGeometry, rayMaterial);
-            // scene.add(ray);
         }
 
         const render = () => {
@@ -437,28 +401,6 @@ const BookGraph = () => {
                 scene.updateMatrixWorld();
                 sphereInstance.updateMatrixWorld();
             }
-            // theta += 0.1;
-
-            // camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-            // camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-            // camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
-
-            // find intersections
-            // raycaster.setFromCamera(pointer, camera);
-            // const intersects = raycaster.intersectObjects(scene.children, false);
-
-            // if (intersects.length > 0) {
-            //     if (INTERSECTED != intersects[0].object) {
-            //         if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-
-            //         INTERSECTED = intersects[0].object;
-            //         INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-            //         INTERSECTED.material.emissive.setHex(0xFF0000);
-            //     }
-            // } else {
-            //     if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-            //     INTERSECTED = null;
-            // }
 
             renderer.render(scene, camera);
             labelRenderer.render(scene, camera);
@@ -480,6 +422,7 @@ const BookGraph = () => {
             controls.update();
         }
 
+        _WORDS = BookTitles.map((e) => e.title);
         init();
         initNodes();
         animate();
@@ -490,7 +433,13 @@ const BookGraph = () => {
     const style = {background: `radial-gradient(ellipse at ' + ${mouseXpercentage} + '% ' + ${mouseYpercentage} + '%, #ee8d76, #FFFFFF), radial-gradient(ellipse at top, #9b59b6, transparent)`};
 
     return (
-        <div id="Graph" style ={style} ref={mountRef} />
+        <>
+            <div id="container">
+                <span id="demotype">Demo Test</span>
+                <span id="count">15 Nodes</span>
+            </div>
+            <div id="Graph" style ={style} ref={mountRef} />
+        </>
     )
 }
 

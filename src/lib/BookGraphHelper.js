@@ -6,6 +6,7 @@ import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 class G {
     constructor() {
         this.nodes = [];
+        this.themeNodes = [];
         this.edges = [];
         this.westernEdges = []; // test
         this.fixed = false; // when to stop loops
@@ -93,14 +94,40 @@ class G {
         nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
         // sphereInstance.add(nodeLabel);
         this.scene.add(nodeLabel);       
+
+        // test
+        // const testThemes = node.themes;
+
+        // for (let i = 0; i < testThemes.length; i++) {
+        //     this.themeNodes.push(
+        //         new N(new THREE.Vector3(
+        //             node.p.x + Math.random() * 10,
+        //             node.p.y + Math.random() * 10,
+        //             node.p.z + Math.random() * 10
+        //         ),
+        //         testThemes[i]));
+
+        //     const themeDiv = document.createElement("div");
+        //     themeDiv.className = "themeLabel";
+        //     themeDiv.textContent = this.titleCaseLabels(testThemes[i]);
+        //     themeDiv.style.marginTop = "-1em";
+        //     themeDiv.style.color = "#333333";
+        //     themeDiv.style.fontSize = "-2.5em";
+        //     themeDiv.style.opacity = "0.15";
+        //     const themeLabel = new CSS2DObject(themeDiv);
+        //     themeLabel.position.set(node.p.x - 5, node.p.y + i*3, node.p.z);
+        //     // sphereInstance.add(nodeLabel);
+        //     this.scene.add(themeLabel);   
+        // }
     }
 }
 
 // Node
 class N {
-    constructor (p, w) {
+    constructor (p, w, t) {
         this.p = p; // position (x, y)
-        this.w = w; // word 
+        this.w = w; // word
+        this.themes = t; 
         this.u = new THREE.Vector3();
         this.f = new THREE.Vector3();        
     }
