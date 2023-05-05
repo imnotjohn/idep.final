@@ -135,7 +135,7 @@ const BookGraph = () => {
                         _WORDS = ThemeWords;
 
                         params.threshold = 0.38; // 0.32
-                        params.westernThreshold = 0.78;
+                        params.westernThreshold = 0.698;
                         params.nodeCount = _WORDS.length;
 
                         init();
@@ -390,6 +390,8 @@ const BookGraph = () => {
                 scene.rotation.y += 0.00015;
                 scene.updateMatrixWorld();
                 sphereInstance.updateMatrixWorld();
+
+                console.log(renderer.info);
             }
 
             renderer.render(scene, camera);
