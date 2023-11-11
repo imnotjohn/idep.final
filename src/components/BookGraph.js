@@ -73,7 +73,7 @@ const BookGraph = () => {
             scene.add(light);        
 
             renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
-            renderer.setClearColor(0xeeeeee, 0.0); // test
+            renderer.setClearColor(0xeeeeee, 0.0);
             renderer.setPixelRatio( window.devicePixelRatio );
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
@@ -165,25 +165,15 @@ const BookGraph = () => {
             // toggle western edges visibility
             const westernFolder = gui.addFolder("Toggle Western Lens");
             westernFolder.add(params, "western").onChange((e) => {
-                console.log(e);
                 if (e && params.demo.includes("Themes")) {
-                    // demo is visualizing Themes
+                    // western toggled on + demo is visualizing Themes
                     _WESTERN = THEMES_WESTERN;
                 } else if (e) {
-                    // demo is visualizing Books
+                    // western toggled on + demo is visualizing Books
                     _WESTERN = BOOKS_WESTERN;
-                // test
-                    } else {
+                } else {
+                    // western toggled off
                     g.PurgeWesternEdges();
-
-                    for (let i = 0; i < scene.children.length; i++) {
-                        if (scene.children[i].name === "westernLineSegment") {
-                            const obj = scene.children[i];
-                            obj.geometry.dispose();
-                            obj.material.dispose(); 
-                            scene.remove(obj);
-                        }
-                    }
                 }
             })
         }
@@ -207,14 +197,10 @@ const BookGraph = () => {
                         }
                     }
                 }
-
-                drawWesternEdges();
             }
-
         }
 
         const drawWesternEdges = () => {
-            console.log(`drawing: ${g.westernEdges.length}`);
             let westernLineNum = 0;
             for (let i = 0; i < g.westernEdges.length; i++) {
                 if (g.westernEdges[i].show) {
@@ -225,7 +211,7 @@ const BookGraph = () => {
                         new THREE.LineBasicMaterial({
                             color: 0xFF0000,
                             transparent: true,
-                            opacity: 0.02,
+                            opacity: 0.45,
                             depthWrite: false,
                         }));
                     westernLineSegments.name = "westernLineSegment";
@@ -244,15 +230,6 @@ const BookGraph = () => {
             if (params.western) {
                 g.PurgeWesternEdges();
                 params.western = false;
-
-                for (let i = 0; i < scene.children.length; i++) {
-                    if (scene.children[i].name === "westernLineSegment") {
-                        const obj = scene.children[i];
-                        obj.geometry.dispose();
-                        obj.material.dispose(); 
-                        scene.remove(obj);
-                    }
-                }
             }
 
             scene = null;
@@ -309,15 +286,6 @@ const BookGraph = () => {
             // Clear Edges if Edges already exists
             if (g.edges.length > 0) {
                 g.PurgeEdges();
-
-                for (let i = 0; i < scene.children.length; i++) {
-                    if (scene.children[i].isLineSegments) {
-                        const obj = scene.children[i];
-                        obj.geometry.dispose();
-                        obj.material.dispose(); 
-                        scene.remove(obj);
-                    }
-                }
             }
 
             const moveScale = nScale;
@@ -357,7 +325,6 @@ const BookGraph = () => {
                             // color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
                             color: 0x000000,
                             transparent: true,
-                            linewidth: 0.5,
                             opacity: 0.9 - (1.0 - g.edges[i].weight),
                             depthWrite: false
                         }));
@@ -404,10 +371,8 @@ const BookGraph = () => {
             g.Move(0.95, 0.015);
             updateNodes();
 
-            if (params.western) {
-                initWesternEdges();
-            }
-            console.log(`westernEdges: ${g.westernEdges.length}`);
+            if (params.western) initWesternEdges();
+            if (params.western && g.westernEdges.length > 0) drawWesternEdges();
 
             initEdges();
             render();

@@ -44,12 +44,31 @@ class G {
         }
     }
 
+    #PurgeSceneChild = (c) => {
+        c.geometry.dispose();
+        c.material.dispose(); 
+        this.scene.remove(c);
+    }
+
     PurgeEdges = () => {
         this.edges = [];
+
+        for (let i = 0; i < this.scene.children.length; i++) {
+            if (this.scene.children[i].isLineSegments) {
+                this.#PurgeSceneChild(this.scene.children[i]);
+            }
+        }
     }
 
     PurgeWesternEdges = () => {
         this.westernEdges = [];
+
+
+        for (let i = 0; i < this.scene.children.length; i++) {
+            if (this.scene.children[i].name === "westernLineSegment") {
+                this.#PurgeSceneChild(this.scene.children[i]);
+            }
+        }
     }
 
     PurgeLabels = () => {
