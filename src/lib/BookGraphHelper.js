@@ -19,24 +19,20 @@ class G {
 
         const sc = this.scene.children;
         for (let i = 0; i < sc.length; i++) {
-            const obj = sc[i];
+            const c = sc[i];
             
             // purge lineSegments for Edges
-            if (obj.isLineSegments && obj.name !== "westernLineSegment") {
-                obj.geometry.dispose();
-                obj.material.dispose();
-                this.scene.remove(obj);
+            if (c.isLineSegments && c.name !== "westernLineSegment") {
+                this.#PurgeSceneChild(c);
             }
 
             // purge instancedMesh for Nodes
-            if (obj.isInstancedMesh) {
-                obj.geometry.dispose();
-                obj.material.dispose();
-                this.scene.remove(obj);
+            if (c.isInstancedMesh) {
+                this.#PurgeSceneChild(c);
             }
 
             // test
-            obj.traverse((c) => {
+            c.traverse((c) => {
                 this.scene.remove(c);
             });
 
