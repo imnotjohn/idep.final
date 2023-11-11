@@ -158,6 +158,7 @@ const KnowledgeGraph = () => {
             statesControl.push(guiStatesFolder.add(params, "state3"));
             statesControl.push(guiStatesFolder.add(params, "state4"));
             // western corpus toggle
+            let westernCounter = 0;
             guiStatesFolder.add(params, "westernVisible").onChange((v) => {
                 if (v) {
                     initWesternEdges();
@@ -246,6 +247,21 @@ const KnowledgeGraph = () => {
         }
 
         const initWesternEdges = () => {
+            // test
+            // if (g.westernEdges.length > 0) {
+            //     g.PurgeWesternEdges();
+
+            //     for (let i = 0; i < scene.children.length; i++) {
+            //         if (scene.children[i].isLineSegments && scene.children[i].name === "westernLine") {
+            //             const obj = scene.children[i];
+            //             obj.geometry.dispose();
+            //             obj.material.dispose();
+            //             scene.remove(obj);
+            //         }
+            //     }
+            // }
+            // end test
+
             for (let j = 0; j < params.nodeCount; j++) {
                 const row = SIMSDATA[j]; // western corpus
                 for (let i = j + 1; i < params.nodeCount; i++) {

@@ -8,7 +8,7 @@ class G {
         this.nodes = [];
         this.themeNodes = [];
         this.edges = [];
-        this.westernEdges = []; // test
+        this.westernEdges = [];
         this.fixed = false; // when to stop loops
         this.scene = new THREE.Scene();
     }
@@ -22,7 +22,7 @@ class G {
             const obj = sc[i];
             
             // purge lineSegments for Edges
-            if (obj.isLineSegments) {
+            if (obj.isLineSegments && obj.name !== "westernLineSegment") {
                 obj.geometry.dispose();
                 obj.material.dispose();
                 this.scene.remove(obj);
@@ -94,31 +94,6 @@ class G {
         nodeLabel.position.set(node.p.x, node.p.y, node.p.z);
         // sphereInstance.add(nodeLabel);
         this.scene.add(nodeLabel);       
-
-        // test
-        // const testThemes = node.themes;
-
-        // for (let i = 0; i < testThemes.length; i++) {
-        //     this.themeNodes.push(
-        //         new N(new THREE.Vector3(
-        //             node.p.x + Math.random() * 10,
-        //             node.p.y + Math.random() * 10,
-        //             node.p.z + Math.random() * 10
-        //         ),
-        //         testThemes[i]));
-
-        //     const themeDiv = document.createElement("div");
-        //     themeDiv.className = "themeLabel";
-        //     themeDiv.textContent = this.titleCaseLabels(testThemes[i]);
-        //     themeDiv.style.marginTop = "-1em";
-        //     themeDiv.style.color = "#333333";
-        //     themeDiv.style.fontSize = "-2.5em";
-        //     themeDiv.style.opacity = "0.15";
-        //     const themeLabel = new CSS2DObject(themeDiv);
-        //     themeLabel.position.set(node.p.x - 5, node.p.y + i*3, node.p.z);
-        //     // sphereInstance.add(nodeLabel);
-        //     this.scene.add(themeLabel);   
-        // }
     }
 }
 
@@ -136,7 +111,6 @@ class N {
         this.u.multiplyScalar(damping);
         this.u.add(this.f.multiplyScalar(dt));
         this.p.add(this.u.multiplyScalar(dt));
-        //this.p.add(new THREE.Vector3(0.5, 0.0, 0.0));
     }
 }
 

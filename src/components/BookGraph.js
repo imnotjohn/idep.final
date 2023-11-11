@@ -20,7 +20,6 @@ import THEMES from '../lib/data/Themes';
 import {G, N, E} from '../lib/BookGraphHelper';
 
 // Color Constants
-// const sceneBGColor = new THREE.Color(0xeeeeee);
 const nodeColor = 0xFFFFFF; // 0xD9D192 yellow
 
 const BookGraph = () => {
@@ -125,8 +124,6 @@ const BookGraph = () => {
             const guiDemoStates = ["Books Demo", "Themes Demo"];
             guiDemoFolder.add(params, "demo").options(guiDemoStates).onChange((v) => {
                 
-                // TODO: add counter for Edges
-                // TODO: implement view of themes per book?
                 switch (v) {
                     case "Themes Demo":
                         purgeChildren();
@@ -168,13 +165,15 @@ const BookGraph = () => {
             // toggle western edges visibility
             const westernFolder = gui.addFolder("Toggle Western Lens");
             westernFolder.add(params, "western").onChange((e) => {
+                console.log(e);
                 if (e && params.demo.includes("Themes")) {
                     // demo is visualizing Themes
                     _WESTERN = THEMES_WESTERN;
                 } else if (e) {
                     // demo is visualizing Books
                     _WESTERN = BOOKS_WESTERN;
-                } else {
+                // test
+                    } else {
                     g.PurgeWesternEdges();
 
                     for (let i = 0; i < scene.children.length; i++) {
@@ -191,45 +190,31 @@ const BookGraph = () => {
 
         const initWesternEdges = () => { 
 
-            // search algorithm
-            // for (let i = 0; i < _WESTERN.length; i++) {
-            //     const row = _WESTERN[i];
-            //     for (let j = 0; j < ((i == _WESTERN.length - 1) ? i : i + 1); j++ ) {
-            //         const e = new E(g.nodes[i], g.nodes[j]);
-            //         g.westernEdges.push(e);
-            //         const sim = row[j];
-            //         if (sim < params.westernThreshold) {
-            //             e.show = false;
-            //         } else {
-            //             e.k = 0;
-            //             e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
-            //             e.show = true;
-            //         }
-            //     }
-            // }
-            
-            
             // pan's
-            for (let j = 0; j < params.nodeCount; j++) {
-                const row = _WESTERN[j]; // western corpus
-                for (let i = j + 1; i < params.nodeCount; i++) {
-                    const e = new E(g.nodes[j], g.nodes[i]);
-                    g.westernEdges.push(e);
-                    const sim = row[i];
-                    if (sim < params.westernThreshold) {
-                        e.show = false;
-                    } else {
-                        e.k = 0;
-                        e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
-                        e.show = true;
+            if (g.westernEdges.length === 0) {
+                for (let j = 0; j < params.nodeCount; j++) {
+                    const row = _WESTERN[j]; // western corpus
+                    for (let i = j + 1; i < params.nodeCount; i++) {
+                        const e = new E(g.nodes[j], g.nodes[i]);
+                        g.westernEdges.push(e);
+                        const sim = row[i];
+                        if (sim < params.westernThreshold) {
+                            e.show = false;
+                        } else {
+                            e.k = 0;
+                            e.targetLength = (e.n1.p.clone().sub(e.n0.p)).length();
+                            e.show = true;
+                        }
                     }
                 }
+
+                drawWesternEdges();
             }
 
-            drawWesternEdges();            
         }
 
         const drawWesternEdges = () => {
+            console.log(`drawing: ${g.westernEdges.length}`);
             let westernLineNum = 0;
             for (let i = 0; i < g.westernEdges.length; i++) {
                 if (g.westernEdges[i].show) {
@@ -250,10 +235,7 @@ const BookGraph = () => {
 
                     scene.add(westernLineSegments);
                 }
-            }
-
-            // westernLineSegments.geometry.setDrawRange(0, westernLineNum);
-            // westernLineSegments.geometry.attributes.position.needsUpdate = true;            
+            }          
         }
 
         const purgeChildren = () => {
@@ -317,6 +299,12 @@ const BookGraph = () => {
             sphereInstance.geometry.attributes.position.needsUpdate = true;
         }
 
+        // test
+        // TODO: implement instance of Edges
+        // TODO: implement update edges
+        // https://codepen.io/prisoner849/pen/XWKYLqW?editors=0010
+        // end test
+
         const initEdges = () => {
             // Clear Edges if Edges already exists
             if (g.edges.length > 0) {
@@ -366,11 +354,9 @@ const BookGraph = () => {
                     const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
                     lineSegments = new THREE.LineSegments(lineGeo, 
                         new THREE.LineBasicMaterial({
-                            // color: edgeColor,
                             // color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
                             color: 0x000000,
                             transparent: true,
-                            // opacity: edgeOpacity,
                             linewidth: 0.5,
                             opacity: 0.9 - (1.0 - g.edges[i].weight),
                             depthWrite: false
@@ -381,8 +367,6 @@ const BookGraph = () => {
                     scene.add(lineSegments);
                 }
             }
-            // lineSegments.geometry.setDrawRange(0, lineNum);
-            // lineSegments.geometry.attributes.position.needsUpdate = true;
         }
 
         const onWindowResize = () => {
@@ -394,9 +378,6 @@ const BookGraph = () => {
 
         const onPointerMove = (e) => {
             e.preventDefault();
-
-            // pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-            // pointer.y = (e.clientY / window.innerHeight) * 2 + 1;
 
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
@@ -410,8 +391,6 @@ const BookGraph = () => {
                 scene.rotation.y += 0.00015;
                 scene.updateMatrixWorld();
                 sphereInstance.updateMatrixWorld();
-
-                // console.log(renderer.info);
             }
 
             renderer.render(scene, camera);
@@ -428,6 +407,7 @@ const BookGraph = () => {
             if (params.western) {
                 initWesternEdges();
             }
+            console.log(`westernEdges: ${g.westernEdges.length}`);
 
             initEdges();
             render();
