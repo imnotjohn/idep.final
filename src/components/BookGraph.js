@@ -131,7 +131,7 @@ const BookGraph = () => {
                         _SIMS = THEMES;
                         _WORDS = ThemeWords;
 
-                        params.threshold = 0.38; // 0.32
+                        params.threshold = 0.38;
                         params.westernThreshold = 0.698;
                         params.nodeCount = _WORDS.length;
 
@@ -143,7 +143,6 @@ const BookGraph = () => {
                         purgeChildren();
 
                         _SIMS = BOOKS;
-                        // _WORDS = BookTitles;
                         _WORDS = BookTitles.map((e) => e.title);
 
                         params.threshold = 0.57;
@@ -211,7 +210,7 @@ const BookGraph = () => {
                         new THREE.LineBasicMaterial({
                             color: 0xFF0000,
                             transparent: true,
-                            opacity: 0.45,
+                            opacity: 0.85,
                             depthWrite: false,
                         }));
                     westernLineSegments.name = "westernLineSegment";
@@ -325,7 +324,8 @@ const BookGraph = () => {
                             // color: `hsl(${i * 360 / g.edges.length}, 80%, 50%)`, // rainbow
                             color: 0x000000,
                             transparent: true,
-                            opacity: 0.9 - (1.0 - g.edges[i].weight),
+                            // opacity: 0.9 - (1.0 - g.edges[i].weight),
+                            opacity: 0.85,
                             depthWrite: false
                         }));
 
