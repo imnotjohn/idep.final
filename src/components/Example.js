@@ -19,6 +19,13 @@ const Example = () => {
 
         // reusable variables
         let camera, scene, renderer, controls; //threejs environment variables
+        
+        // test
+        let lineInstance;
+        const pts = [];
+        pts.push([-50, 0, 0]);
+        pts.push([0, 50, 0]);
+        pts.push([0, 0, 50]);
 
         const init = () => {
             scene = new THREE.Scene();
@@ -50,7 +57,8 @@ const Example = () => {
             initNodes();
 
             // init edges
-            initEdges();
+            // initEdges();
+            initEdgeObjects(); // test
 
             // render Graph + Nodes + Edges
             renderGraph();
@@ -68,7 +76,7 @@ const Example = () => {
             // create three node points
             const node0 = new ExampleNode(-50, 0, 0);
             const node1 = new ExampleNode(0, 50, 0);
-            const node2 = new ExampleNode(25, 50, 0);
+            const node2 = new ExampleNode(0, 0, 50);
 
             g.nodes.push(node0);
             g.nodes.push(node1);
@@ -86,6 +94,19 @@ const Example = () => {
 
             drawEdges();
         }
+
+        // test - instance of lineSegment
+        const initEdgeObjects = () => {
+            lineInstance = new THREE.InstancedMesh(
+                new THREE.BufferGeometry().setFromPoints(pts),
+                new THREE.LineBasicMaterial({color: "pink"}),
+                50 // max line instances
+            );
+
+            lineInstance.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // will be updated every frame
+            scene.add(lineInstance);
+        }
+        // end test
 
         const drawEdges = () => {
             for (let i = 0; i < g.edges.length; i++) {
